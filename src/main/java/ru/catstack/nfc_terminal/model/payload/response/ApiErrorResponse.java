@@ -6,7 +6,7 @@ public class ApiErrorResponse {
     private final String path;
     private final Integer code;
 
-    public ApiErrorResponse(String message, Integer code, String cause, String path){
+    public ApiErrorResponse(String message, int code, String cause, String path){
         this.code = code;
         this.message = message;
         this.cause = cause;

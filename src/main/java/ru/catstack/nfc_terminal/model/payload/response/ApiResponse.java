@@ -6,23 +6,11 @@ import java.time.Instant;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse {
-    private ApiErrorResponse error;
     private Object response;
     private final Instant timestamp = Instant.now();
 
-    public ApiResponse(ApiErrorResponse errorResponse) {
-        this.error = errorResponse;
-    }
-
-    public ApiResponse(Object successResponse) {
-        this.response = successResponse;
-    }
-
-    public ApiResponse(boolean b, String toString) {
-    }
-
-    public ApiErrorResponse getError() {
-        return error;
+    public ApiResponse(Object response) {
+        this.response = response;
     }
 
     public Object getResponse() {
