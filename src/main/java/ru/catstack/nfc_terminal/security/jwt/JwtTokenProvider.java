@@ -2,7 +2,7 @@ package ru.catstack.nfc_terminal.security.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,16 +16,12 @@ import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.Date;
 
+@EnableConfigurationProperties
 @Component
 public class JwtTokenProvider {
-    @Value("${app.jwt.secret}")
-    private static String secret;
-
-    @Value("${app.jwt.prefix}")
-    private static String tokenPrefix;
-
-    @Value("${app.jwt.header}")
-    private static String tokenHeader;
+    private static final String secret = "mySecret";
+    private static final String tokenHeader = "Authorization";
+    private static final String tokenPrefix = "Bearer";
 
     private final JwtUserDetailsService userDetailsService;
 
@@ -38,11 +34,6 @@ public class JwtTokenProvider {
         return new BCryptPasswordEncoder();
     }
 
-//    @PostConstruct
-//    protected void init() {
-//        secret = Base64.getEncoder().encodeToString(secret.getBytes());
-//    }
-
     public String createToken(@NotNull JwtUser user) {
         return Jwts.builder()
                 .setId(Long.toString(user.getId()))
@@ -54,7 +45,7 @@ public class JwtTokenProvider {
 
     Authentication getAuthentication(String token) {
         var userDetails = userDetailsService.loadById(getUserId(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, null);
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     public Long getUserId(String token) {

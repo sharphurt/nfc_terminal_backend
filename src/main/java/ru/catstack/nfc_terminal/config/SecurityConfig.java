@@ -1,6 +1,5 @@
 package ru.catstack.nfc_terminal.config;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -9,21 +8,33 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import ru.catstack.nfc_terminal.security.jwt.JwtConfigurer;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.catstack.nfc_terminal.exception.handler.CustomAccessDeniedHandler;
+import ru.catstack.nfc_terminal.security.jwt.JwtTokenFilter;
 import ru.catstack.nfc_terminal.security.jwt.JwtTokenProvider;
+
+import java.util.List;
+
 
 @EnableConfigurationProperties
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private static final String LOGIN_ENDPOINT = "/api/auth/login";
-    private static final String REGISTER_ENDPOINT = "/api/auth/register";
-    private static final String LOGOUT_ENDPOINT = "/api/auth/logout";
+    public static final List<String> publicEndpoints = List.of(
+            "/api/auth/login",
+            "/api/auth/register"
+    );
+
+    public static final List<String> authenticatedEndpoints = List.of(
+            "/api/auth/logout",
+            "/api/auth/about"
+    );
 
     private final JwtTokenProvider tokenProvider;
 
     @Autowired
-    public SecurityConfig(JwtTokenProvider tokenProvider, JwtTokenProvider tokenProvider1) {
-        this.tokenProvider = tokenProvider1;
+    public SecurityConfig(JwtTokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
     }
 
     @Bean
@@ -33,20 +44,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    public void configure(final HttpSecurity http) throws Exception {
         http
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers(LOGIN_ENDPOINT).permitAll()
-                .antMatchers(REGISTER_ENDPOINT).permitAll()
-                .antMatchers(LOGOUT_ENDPOINT).authenticated()
+                .and().authorizeRequests()
+                .antMatchers(publicEndpoints.toArray(new String[0])).permitAll()
                 .anyRequest().authenticated()
-                .and()
-                .apply(new JwtConfigurer(tokenProvider))
-                .and()
-                .exceptionHandling();
+        .and().addFilterBefore(new JwtTokenFilter(tokenProvider, authenticatedEndpoints), UsernamePasswordAuthenticationFilter.class)
+        .exceptionHandling()
+        .authenticationEntryPoint(authenticationEntryPoint());
     }
+
+    private AuthenticationEntryPoint authenticationEntryPoint() {
+        return new CustomAccessDeniedHandler();
+    }
+
 }

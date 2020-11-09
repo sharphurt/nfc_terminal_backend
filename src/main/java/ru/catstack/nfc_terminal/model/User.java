@@ -51,6 +51,7 @@ public class User extends DateAudit {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.role = role;
         this.status = Status.ACTIVE;
     }
 

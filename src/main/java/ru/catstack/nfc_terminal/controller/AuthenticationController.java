@@ -13,6 +13,7 @@ import ru.catstack.nfc_terminal.model.payload.response.JwtAuthResponse;
 import ru.catstack.nfc_terminal.security.jwt.JwtTokenProvider;
 import ru.catstack.nfc_terminal.security.jwt.JwtUser;
 import ru.catstack.nfc_terminal.service.AuthService;
+import ru.catstack.nfc_terminal.service.UserService;
 
 import javax.validation.Valid;
 
@@ -21,11 +22,13 @@ import javax.validation.Valid;
 public class AuthenticationController {
     private final AuthService authService;
     private final JwtTokenProvider tokenProvider;
+    private final UserService userService;
 
     @Autowired
-    public AuthenticationController(AuthService authService, JwtTokenProvider tokenProvider) {
+    public AuthenticationController(AuthService authService, JwtTokenProvider tokenProvider, UserService userService) {
         this.authService = authService;
         this.tokenProvider = tokenProvider;
+        this.userService = userService;
     }
 
     @GetMapping("/checkEmailInUse")
@@ -67,6 +70,12 @@ public class AuthenticationController {
     public ApiResponse logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
         authService.logoutUser(logOutRequest);
         return new ApiResponse("Log out successfully");
+    }
+
+    @GetMapping("/about")
+    public ApiResponse getAboutMe() {
+        var me = userService.getLoggedInUser();
+        return new ApiResponse(me);
     }
 }
 
