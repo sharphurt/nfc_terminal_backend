@@ -22,7 +22,9 @@ import java.util.List;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public static final List<String> publicEndpoints = List.of(
             "/api/auth/login",
-            "/api/auth/register"
+            "/api/auth/register",
+            "/api/auth/checkEmail",
+            "/api/auth/checkUsername"
     );
 
     public static final List<String> authenticatedEndpoints = List.of(
@@ -52,13 +54,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests()
                 .antMatchers(publicEndpoints.toArray(new String[0])).permitAll()
                 .anyRequest().authenticated()
-        .and().addFilterBefore(new JwtTokenFilter(tokenProvider, authenticatedEndpoints), UsernamePasswordAuthenticationFilter.class)
-        .exceptionHandling()
-        .authenticationEntryPoint(authenticationEntryPoint());
+                .and().addFilterBefore(new JwtTokenFilter(tokenProvider, authenticatedEndpoints), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint());
     }
 
     private AuthenticationEntryPoint authenticationEntryPoint() {
         return new CustomAccessDeniedHandler();
     }
-
 }

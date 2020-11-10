@@ -31,13 +31,13 @@ public class AuthenticationController {
         this.userService = userService;
     }
 
-    @GetMapping("/checkEmailInUse")
+    @GetMapping("/checkEmail")
     public ApiResponse checkEmailInUse(@RequestParam("email") String email) {
         var emailExists = authService.emailAlreadyExists(email);
         return new ApiResponse(emailExists);
     }
 
-    @GetMapping("/checkUsernameInUse")
+    @GetMapping("/checkUsername")
     public ApiResponse checkUsernameInUse(@RequestParam("username") String username) {
         var usernameExists = authService.usernameAlreadyExists(username);
         return new ApiResponse(usernameExists);

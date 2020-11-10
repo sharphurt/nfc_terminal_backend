@@ -47,11 +47,11 @@ public class AuthService {
         return Optional.ofNullable(registeredNewUser);
     }
 
-    public Boolean emailAlreadyExists(String email) {
+    public boolean emailAlreadyExists(String email) {
         return userService.existsByEmail(email);
     }
 
-    public Boolean usernameAlreadyExists(String username) {
+    public boolean usernameAlreadyExists(String username) {
         return userService.existsByUsername(username);
     }
 

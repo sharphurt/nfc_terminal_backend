@@ -6,7 +6,7 @@ import java.time.Instant;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse {
-    private Object response;
+    private final Object response;
     private final Instant timestamp = Instant.now();
 
     public ApiResponse(Object response) {
