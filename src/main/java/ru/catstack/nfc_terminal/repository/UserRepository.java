@@ -42,10 +42,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("UPDATE User c SET c.updatedAt = :updatedAt WHERE c.id = :id")
     void setUpdatedAtById(@Param("id") Long id, @Param("updatedAt") Instant updatedAt);
 
-    @Transactional @Modifying
-    @Query("UPDATE User c SET c.avatar = :avatar WHERE c.id = :id")
-    void updateAvatarById(@Param("id") Long id, @Param("avatar") String avatar);
-
     Boolean existsByEmail(String email);
     Boolean existsByUsername(String username);
 }

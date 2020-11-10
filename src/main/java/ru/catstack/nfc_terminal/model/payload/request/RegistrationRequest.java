@@ -23,27 +23,26 @@ public class RegistrationRequest {
     @ApiModelProperty(value = "A valid last name", required = true, allowableValues = "NonEmpty String")
     private String lastName;
 
+    @ApiModelProperty(value = "A valid patronymic")
+    private String patronymic;
+
     @NotBlank(message = "Email cannot be blank")
     @Email(message = "Email is not valid")
     @ApiModelProperty(value = "A valid email", required = true, allowableValues = "NonEmpty String")
     private String email;
-
-    @NotBlank(message = "Role cannot be blank")
-    @ApiModelProperty(value = "A valid email", required = true, allowableValues = "NonEmpty String")
-    private String role;
 
     @NotBlank(message = "Password cannot be blank")
     @Length(min = 8, max = 50, message = "Password length must be between 8 and 50 characters")
     @ApiModelProperty(value = "A valid password string", required = true, allowableValues = "NonEmpty String")
     private String password;
 
-    public RegistrationRequest(String username, String email, String firstName, String lastName, String password, String role) {
+    public RegistrationRequest(String username, String email, String firstName, String lastName, String patronymic, String password) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.patronymic = patronymic;
         this.email = email;
         this.password = password;
-        this.role = role;
     }
 
     public RegistrationRequest() {
@@ -69,7 +68,7 @@ public class RegistrationRequest {
         return lastName;
     }
 
-    public String getRole() {
-        return role;
+    public String getPatronymic() {
+        return patronymic;
     }
 }

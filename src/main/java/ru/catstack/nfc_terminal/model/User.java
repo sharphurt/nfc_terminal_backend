@@ -2,14 +2,14 @@ package ru.catstack.nfc_terminal.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ru.catstack.nfc_terminal.model.audit.DateAudit;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User extends DateAudit {
     @Id
     @Column(name = "user_id")
@@ -25,34 +25,35 @@ public class User extends DateAudit {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "patronymic")
+    private String patronymic;
+
     @Column(name = "email")
     private String email;
-
-    @Column(name = "role")
-    private Role role;
 
     @JsonIgnore
     @Column(name = "password")
     private String password;
 
-    @Column(name = "avatar")
-    private String avatar;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Employee> employees;
+
     public User() {
     }
 
-    public User(String email, String password, String username, String firstName, String lastName, Role role) {
+    public User(String email, String password, String username, String firstName, String lastName, String patronymic) {
         this.email = email;
         this.password = password;
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.role = role;
+        this.patronymic = patronymic;
         this.status = Status.ACTIVE;
+        this.employees = new HashSet<>();
     }
 
     public Long getId() {
@@ -83,15 +84,11 @@ public class User extends DateAudit {
         return lastName;
     }
 
-    String getAvatar() {
-        return avatar;
+    public String getPatronymic() {
+        return patronymic;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public Role getRole() {
-        return role;
+    public Set<Employee> getRegistrations() {
+        return employees;
     }
 }

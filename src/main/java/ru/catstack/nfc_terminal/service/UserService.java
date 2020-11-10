@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import ru.catstack.nfc_terminal.exception.AccessDeniedException;
 import ru.catstack.nfc_terminal.exception.ResourceAlreadyInUseException;
 import ru.catstack.nfc_terminal.exception.ResourceNotFoundException;
-import ru.catstack.nfc_terminal.model.Role;
 import ru.catstack.nfc_terminal.model.User;
 import ru.catstack.nfc_terminal.model.payload.request.RegistrationRequest;
 import ru.catstack.nfc_terminal.repository.UserRepository;
@@ -54,7 +53,7 @@ public class UserService {
 
     User createUser(RegistrationRequest request) {
         return new User(request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getUsername(),
-                request.getFirstName(), request.getLastName(), Role.valueOf(request.getRole()));
+                request.getFirstName(), request.getLastName(), request.getPatronymic());
     }
 
     public User getLoggedInUser() {
@@ -62,11 +61,6 @@ public class UserService {
         if (!auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken)
             throw new AccessDeniedException("Unexpected error");
         return findByIdOrThrow(((JwtUser) auth.getPrincipal()).getId());
-    }
-
-    public void updateAvatarById(Long id, String avatarCode) {
-        userRepository.updateAvatarById(id, avatarCode);
-        setUpdatedAtById(id, Instant.now());
     }
 
     public void updateUsernameById(Long id, String username) {
