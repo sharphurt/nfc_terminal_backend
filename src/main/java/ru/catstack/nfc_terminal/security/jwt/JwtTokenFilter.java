@@ -43,7 +43,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private boolean NeedToCheckRequest(HttpServletRequest request) {
         for (var pattern : this.authenticatedRequestPatterns)
-            if (request.getRequestURL().toString().contains(pattern))
+            if (request.getRequestURI().matches(pattern))
                 return true;
         return false;
     }

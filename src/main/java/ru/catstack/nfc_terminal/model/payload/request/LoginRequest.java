@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 
 @ApiModel(value = "Login Request", description = "The login request payload")
 public class LoginRequest {
-
     @NotBlank(message = "Login Username can be null but not blank")
     @ApiModelProperty(value = "Registered username", allowableValues = "NonEmpty String")
     private String username;

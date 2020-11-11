@@ -90,10 +90,10 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ApiErrorResponse(ex.getMessage(), 417, ex.getClass().getName(), pathFromRequest(request));
     }
 
-    @ExceptionHandler(value = UserRegistrationException.class)
+    @ExceptionHandler(value = ObjectSavingException.class)
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     @ResponseBody
-    public ApiErrorResponse handleUserRegistrationException(@NotNull UserRegistrationException ex, WebRequest request) {
+    public ApiErrorResponse handleUserRegistrationException(@NotNull ObjectSavingException ex, WebRequest request) {
         return new ApiErrorResponse(ex.getMessage(), 417, ex.getClass().getName(), pathFromRequest(request));
     }
 

@@ -29,7 +29,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     public static final List<String> authenticatedEndpoints = List.of(
             "/api/auth/logout",
-            "/api/auth/about"
+            "/api/auth/about",
+            "/api/companies/create",
+            "/api/companies\\/\\d+"
     );
 
     private final JwtTokenProvider tokenProvider;

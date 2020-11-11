@@ -24,7 +24,7 @@ public class Company extends DateAudit {
     private String taxSystem;
 
     @Column(name = "payments_address")
-    private String paymentsAddress;
+    private String address;
 
     @Column(name = "kkt")
     private long kkt;
@@ -32,11 +32,11 @@ public class Company extends DateAudit {
     public Company() {
     }
 
-    public Company(String companyName, long inn, String taxSystem, String paymentsAddress, long kkt) {
+    public Company(String companyName, long inn, String taxSystem, String address, long kkt) {
         this.companyName = companyName;
         this.inn = inn;
         this.taxSystem = taxSystem;
-        this.paymentsAddress = paymentsAddress;
+        this.address = address;
         this.kkt = kkt;
         this.employees = new HashSet<>();
     }
@@ -53,8 +53,8 @@ public class Company extends DateAudit {
         return taxSystem;
     }
 
-    public String getPaymentsAddress() {
-        return paymentsAddress;
+    public String getAddress() {
+        return address;
     }
 
     public long getKkt() {

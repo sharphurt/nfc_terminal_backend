@@ -1,6 +1,7 @@
 package ru.catstack.nfc_terminal.model;
 
 import ru.catstack.nfc_terminal.model.audit.DateAudit;
+import ru.catstack.nfc_terminal.model.enums.DeviceType;
 
 import javax.persistence.*;
 

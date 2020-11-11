@@ -1,5 +1,7 @@
 package ru.catstack.nfc_terminal.model;
 
+import ru.catstack.nfc_terminal.model.enums.DeviceType;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 

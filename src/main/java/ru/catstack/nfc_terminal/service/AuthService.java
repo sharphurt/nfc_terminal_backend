@@ -4,14 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.catstack.nfc_terminal.exception.ResourceAlreadyInUseException;
 import ru.catstack.nfc_terminal.exception.UserLogOutException;
-import ru.catstack.nfc_terminal.model.Session;
+import ru.catstack.nfc_terminal.exception.UserLoginException;
 import ru.catstack.nfc_terminal.model.User;
 import ru.catstack.nfc_terminal.model.payload.request.LogOutRequest;
 import ru.catstack.nfc_terminal.model.payload.request.LoginRequest;
 import ru.catstack.nfc_terminal.model.payload.request.RegistrationRequest;
+import ru.catstack.nfc_terminal.model.payload.response.JwtAuthResponse;
 import ru.catstack.nfc_terminal.security.jwt.JwtTokenProvider;
 import ru.catstack.nfc_terminal.security.jwt.JwtUser;
 
@@ -43,7 +45,7 @@ public class AuthService {
         if (usernameAlreadyExists(username))
             throw new ResourceAlreadyInUseException("Username", "value", username);
 
-        var registeredNewUser = userService.save(userService.createUser(request));
+        var registeredNewUser = userService.createUser(request);
         return Optional.ofNullable(registeredNewUser);
     }
 
@@ -55,24 +57,26 @@ public class AuthService {
         return userService.existsByUsername(username);
     }
 
-    public Optional<Authentication> authenticateUser(LoginRequest loginRequest) {
+    public JwtAuthResponse authenticateUser(LoginRequest loginRequest) {
+        var auth = createAuthenticationOrThrow(loginRequest.getUsername(), loginRequest.getPassword());
+        var principal = (JwtUser) auth.getPrincipal();
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        sessionService.createSession(auth, loginRequest);
+        var jwtToken = generateToken(principal);
+        return new JwtAuthResponse(jwtToken, tokenProvider.getTokenPrefix());
+    }
+
+    private Authentication createAuthenticationOrThrow(String username, String password) {
         return Optional.ofNullable(authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())));
+                new UsernamePasswordAuthenticationToken(username, password)))
+                .orElseThrow(() -> new UserLoginException("Couldn't login user [" + username + "]"));
     }
 
     public String generateToken(JwtUser user) {
         return tokenProvider.createToken(user);
     }
 
-    public void createSession(Authentication auth, LoginRequest loginRequest) {
-        var user = (JwtUser) auth.getPrincipal();
-        if (sessionService.isDeviceAlreadyExists(loginRequest.getDeviceInfo())) {
-            var session = sessionService.findByUserIdAndDeviceId(user.getId(), loginRequest.getDeviceInfo().getDeviceId());
-            session.ifPresent(sess -> sessionService.deleteBySessionId(sess.getId()));
-        }
-        var newSession = new Session(user.getId(), loginRequest.getDeviceInfo());
-        sessionService.save(newSession);
-    }
 
     public void logoutUser(LogOutRequest logOutRequest) {
         var me = userService.getLoggedInUser();

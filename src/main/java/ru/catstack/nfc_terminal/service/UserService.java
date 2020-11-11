@@ -52,8 +52,9 @@ public class UserService {
     }
 
     User createUser(RegistrationRequest request) {
-        return new User(request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getUsername(),
+        var user = new User(request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getUsername(),
                 request.getFirstName(), request.getLastName(), request.getPatronymic());
+        return save(user);
     }
 
     public User getLoggedInUser() {

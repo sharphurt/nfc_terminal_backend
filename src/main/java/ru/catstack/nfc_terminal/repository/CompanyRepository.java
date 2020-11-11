@@ -7,4 +7,10 @@ import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
     Optional<Company> findByInn(long inn);
+
+    boolean existsByInn(long inn);
+
+    boolean existsByKkt(long kkt);
+
+    boolean existsByCompanyName(String name);
 }

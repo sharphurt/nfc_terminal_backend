@@ -7,6 +7,7 @@ import javax.persistence.*;
 @Entity
 public class Employee extends DateAudit {
     @Id
+            @Column(name = "id")
     long id;
 
     @ManyToOne
