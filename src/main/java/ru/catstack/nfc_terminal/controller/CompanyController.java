@@ -7,17 +7,23 @@ import ru.catstack.nfc_terminal.exception.ResourceNotFoundException;
 import ru.catstack.nfc_terminal.model.payload.request.CreateCompanyRequest;
 import ru.catstack.nfc_terminal.model.payload.response.ApiResponse;
 import ru.catstack.nfc_terminal.service.CompanyService;
+import ru.catstack.nfc_terminal.service.EmployeeService;
+import ru.catstack.nfc_terminal.service.UserService;
 
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/api/companies/")
+@RequestMapping("/api/companies/")
 public class CompanyController {
     private final CompanyService companyService;
+    private final EmployeeService employeeService;
+    private final UserService userService;
 
     @Autowired
-    public CompanyController(CompanyService companyService) {
+    public CompanyController(CompanyService companyService, EmployeeService employeeService, UserService userService) {
         this.companyService = companyService;
+        this.employeeService = employeeService;
+        this.userService = userService;
     }
 
     @GetMapping("{inn}")
@@ -29,8 +35,12 @@ public class CompanyController {
 
     @PostMapping("/create")
     public ApiResponse createCompany(@Valid @RequestBody CreateCompanyRequest createCompanyRequest) {
-        return companyService.createCompany(createCompanyRequest)
-                .map(c -> new ApiResponse("Company registered successfully"))
-                .orElseThrow(() -> new ObjectSavingException(createCompanyRequest.getName(), "The company was not successfully created"));
+        var company = companyService.createCompany(createCompanyRequest)
+                .orElseThrow(() -> new ObjectSavingException("Company", "Unexpected database error"));
+        var me = userService.getLoggedInUser();
+        employeeService.createEmployee(me, company)
+                .orElseThrow(() -> new ObjectSavingException("Employee", "Unexpected database error"));
+
+        return new ApiResponse("Company was created successfully with logged-in employee");
     }
 }

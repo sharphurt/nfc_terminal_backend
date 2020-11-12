@@ -1,6 +1,7 @@
 package ru.catstack.nfc_terminal.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.catstack.nfc_terminal.model.audit.DateAudit;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ public class Company extends DateAudit {
     @Column(name = "inn")
     private long inn;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "company")
     private Set<Employee> employees;
 

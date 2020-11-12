@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ObjectSavingException extends RuntimeException {
 
     public ObjectSavingException(String objectName, String message) {
-        super(String.format("Failed to register User %s: '%s'", objectName, message));
+        super(String.format("Failed to register object %s: '%s'", objectName, message));
     }
 
 }

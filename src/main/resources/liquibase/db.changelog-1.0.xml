@@ -117,7 +117,7 @@
     <changeSet id="1.0.3" author="sharphurt">
         <!--Employee table-->
         <createTable tableName="employee">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="true"/>
             </column>
 
@@ -126,10 +126,6 @@
             </column>
 
             <column name="inn" type="BIGINT">
-                <constraints nullable="false" unique="false"/>
-            </column>
-
-            <column name="appointment" type="VARCHAR(100)">
                 <constraints nullable="false" unique="false"/>
             </column>
 

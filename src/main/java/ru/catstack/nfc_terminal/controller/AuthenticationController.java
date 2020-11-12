@@ -13,7 +13,7 @@ import ru.catstack.nfc_terminal.service.UserService;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/api/auth/")
+@RequestMapping("/api/auth/")
 public class AuthenticationController {
     private final AuthService authService;
     private final UserService userService;
@@ -48,7 +48,6 @@ public class AuthenticationController {
         return authService.registerUser(registrationRequest)
                 .map(user -> new ApiResponse("User registered successfully"))
                 .orElseThrow(() -> new ObjectSavingException(registrationRequest.getUsername(), "Missing user object in database"));
-
     }
 
     @PostMapping("/logout")
