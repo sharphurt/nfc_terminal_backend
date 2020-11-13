@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 @Entity
 public class Employee extends DateAudit {
+    @JsonIgnore
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

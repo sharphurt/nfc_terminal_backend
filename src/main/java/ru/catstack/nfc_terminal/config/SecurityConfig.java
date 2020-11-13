@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     public static final List<String> authenticatedEndpoints = List.of(
             "/api/auth/logout",
-            "/api/auth/about",
+            "/api/users/me",
             "/api/companies/create",
             "/api/companies\\/\\d+"
     );

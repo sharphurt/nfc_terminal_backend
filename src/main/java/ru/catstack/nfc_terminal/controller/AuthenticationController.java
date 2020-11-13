@@ -8,7 +8,6 @@ import ru.catstack.nfc_terminal.model.payload.request.LoginRequest;
 import ru.catstack.nfc_terminal.model.payload.request.RegistrationRequest;
 import ru.catstack.nfc_terminal.model.payload.response.ApiResponse;
 import ru.catstack.nfc_terminal.service.AuthService;
-import ru.catstack.nfc_terminal.service.UserService;
 
 import javax.validation.Valid;
 
@@ -16,13 +15,10 @@ import javax.validation.Valid;
 @RequestMapping("/api/auth/")
 public class AuthenticationController {
     private final AuthService authService;
-    private final UserService userService;
-    // TODO: Вынести в отдельный контроллер методы для работы с юзером
 
     @Autowired
-    public AuthenticationController(AuthService authService, UserService userService) {
+    public AuthenticationController(AuthService authService) {
         this.authService = authService;
-        this.userService = userService;
     }
 
     @GetMapping("/checkEmail")
@@ -54,12 +50,6 @@ public class AuthenticationController {
     public ApiResponse logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
         authService.logoutUser(logOutRequest);
         return new ApiResponse("Log out successfully");
-    }
-
-    @GetMapping("/about")
-    public ApiResponse getAboutMe() {
-        var me = userService.getLoggedInUser();
-        return new ApiResponse(me);
     }
 }
 
