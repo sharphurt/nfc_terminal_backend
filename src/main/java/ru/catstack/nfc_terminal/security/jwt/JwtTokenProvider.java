@@ -42,7 +42,7 @@ public class JwtTokenProvider {
 
     public String createToken(@NotNull JwtUser user, @NotNull Session session) {
         return Jwts.builder()
-                .setId(String.valueOf(session.getId()))
+                .setId(String.valueOf(session.getUniqueKey()))
                 .setSubject(String.valueOf(user.getId()))
                 .setIssuedAt(Date.from(Instant.now()))
                 .signWith(SignatureAlgorithm.HS512, secret)
@@ -54,7 +54,7 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public long getSessionId(String token) {
+    public long getUniqueKey(String token) {
         return Long.parseLong(Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getId());
     }
 
@@ -74,6 +74,6 @@ public class JwtTokenProvider {
     }
 
     public boolean isTokenValid(String token) {
-        return token != null && !token.equals("") && sessionService.findBySessionId(getSessionId(token)).isPresent();
+        return token != null && !token.equals("") && sessionService.existsByUniqueKey(getUniqueKey(token));
     }
 }

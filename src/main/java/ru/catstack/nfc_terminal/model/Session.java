@@ -13,6 +13,9 @@ public class Session extends DateAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name = "unique_key")
+    private long uniqueKey;
+
     @Column(name = "user_id")
     private long userId;
 
@@ -26,10 +29,11 @@ public class Session extends DateAudit {
     public Session() {
     }
 
-    public Session(Long userId, DeviceInfo deviceInfo) {
+    public Session(Long userId, DeviceInfo deviceInfo, long uniqueKey) {
         this.userId = userId;
         this.deviceType = deviceInfo.getDeviceType();
         this.deviceId = deviceInfo.getDeviceId();
+        this.uniqueKey = uniqueKey;
     }
 
     public long getId() {
@@ -50,5 +54,9 @@ public class Session extends DateAudit {
 
     public Long getUserId() {
         return userId;
+    }
+
+    public long getUniqueKey() {
+        return uniqueKey;
     }
 }

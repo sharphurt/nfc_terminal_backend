@@ -65,6 +65,10 @@
                 <constraints nullable="false"/>
             </column>
 
+            <column name="unique_key" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
             <column name="device_type" type="VARCHAR(30)">
                 <constraints nullable="false"/>
             </column>
