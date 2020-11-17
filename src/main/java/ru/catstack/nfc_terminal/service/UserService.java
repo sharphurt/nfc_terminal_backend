@@ -53,7 +53,7 @@ public class UserService {
 
     User createUser(RegistrationRequest request) {
         var user = new User(request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getUsername(),
-                request.getFirstName(), request.getLastName(), request.getPatronymic());
+                request.getFirstName(), request.getLastName(), request.getPatronymic(), request.getPhone());
         return save(user);
     }
 

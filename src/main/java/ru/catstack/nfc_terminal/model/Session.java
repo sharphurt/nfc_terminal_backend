@@ -11,10 +11,10 @@ public class Session extends DateAudit {
     @Id
     @Column(name = "session_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(name = "user_id")
-    private Long userId;
+    private long userId;
 
     @Column(name = "device_type")
     @Enumerated(value = EnumType.STRING)
@@ -32,7 +32,7 @@ public class Session extends DateAudit {
         this.deviceId = deviceInfo.getDeviceId();
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 

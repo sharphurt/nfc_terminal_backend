@@ -28,7 +28,7 @@ public class EmployeeService {
         employeeRepository.save(employee);
     }
 
-    Optional<Employee> findByUserAndCompany(User user, Company company){
+    Optional<Employee> findByUserAndCompany(User user, Company company) {
         return employeeRepository.findByUserAndCompany(user, company);
     }
 

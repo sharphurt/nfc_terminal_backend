@@ -3,6 +3,7 @@ package ru.catstack.nfc_terminal.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.catstack.nfc_terminal.exception.ResourceAlreadyInUseException;
+import ru.catstack.nfc_terminal.model.Bill;
 import ru.catstack.nfc_terminal.model.Company;
 import ru.catstack.nfc_terminal.model.payload.request.CreateCompanyRequest;
 import ru.catstack.nfc_terminal.repository.CompanyRepository;
@@ -13,10 +14,12 @@ import java.util.Optional;
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final BillService billService;
 
     @Autowired
-    public CompanyService(CompanyRepository companyRepository) {
+    public CompanyService(CompanyRepository companyRepository, BillService billService) {
         this.companyRepository = companyRepository;
+        this.billService = billService;
     }
 
     public Optional<Company> createCompany(CreateCompanyRequest request) {
@@ -27,10 +30,15 @@ public class CompanyService {
         if (existsByName(request.getName()))
             throw new ResourceAlreadyInUseException("Company name", "value", request.getName());
 
-        var company = new Company(request.getName(), request.getInn(), request.getTaxSystem(), request.getAddress(), request.getKkt());
+        var bill = billService.save(new Bill());
+        var company = new Company(request.getName(), request.getInn(), request.getTaxSystem(), request.getAddress(), request.getKkt(), bill);
         save(company);
 
         return findByInn(company.getInn());
+    }
+
+    public void addToBalance(Company company, float amount) {
+        companyRepository.updateBalanceById(company.getBill().getId(), company.getBill().getBalance() + amount);
     }
 
     public Company save(Company company) {
@@ -49,7 +57,7 @@ public class CompanyService {
         return companyRepository.existsByCompanyName(name);
     }
 
-    public Optional<Company> findByInn(long inn){
+    public Optional<Company> findByInn(long inn) {
         return companyRepository.findByInn(inn);
     }
 }

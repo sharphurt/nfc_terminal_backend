@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.catstack.nfc_terminal.exception.ResourceAlreadyInUseException;
 import ru.catstack.nfc_terminal.exception.UserLogOutException;
 import ru.catstack.nfc_terminal.exception.UserLoginException;
+import ru.catstack.nfc_terminal.model.Session;
 import ru.catstack.nfc_terminal.model.User;
 import ru.catstack.nfc_terminal.model.payload.request.LogOutRequest;
 import ru.catstack.nfc_terminal.model.payload.request.LoginRequest;
@@ -62,8 +63,8 @@ public class AuthService {
         var principal = (JwtUser) auth.getPrincipal();
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        sessionService.createSession(auth, loginRequest);
-        var jwtToken = generateToken(principal);
+        var session = sessionService.createSession(auth, loginRequest);
+        var jwtToken = generateToken(principal, session);
         return new JwtAuthResponse(jwtToken, tokenProvider.getTokenPrefix());
     }
 
@@ -73,8 +74,8 @@ public class AuthService {
                 .orElseThrow(() -> new UserLoginException("Couldn't login user [" + username + "]"));
     }
 
-    public String generateToken(JwtUser user) {
-        return tokenProvider.createToken(user);
+    public String generateToken(JwtUser user, Session session) {
+        return tokenProvider.createToken(user, session);
     }
 
 

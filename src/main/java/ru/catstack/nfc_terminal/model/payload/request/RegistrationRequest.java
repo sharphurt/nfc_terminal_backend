@@ -37,13 +37,19 @@ public class RegistrationRequest {
     @ApiModelProperty(value = "A valid password string", required = true, allowableValues = "NonEmpty String")
     private String password;
 
-    public RegistrationRequest(String username, String email, String firstName, String lastName, String patronymic, String password) {
+    @NotBlank(message = "Telephone cannot be blank")
+    @Pattern(regexp = "[+][0-9]{1,5}[0-9]{9,15}")
+    @ApiModelProperty(value = "A valid telephone string", required = true, allowableValues = "NonEmpty String")
+    private String phone;
+
+    public RegistrationRequest(String username, String email, String firstName, String lastName, String patronymic, String password,  String phone) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;
         this.email = email;
         this.password = password;
+        this.phone = phone;
     }
 
     public RegistrationRequest() {
@@ -71,5 +77,9 @@ public class RegistrationRequest {
 
     public String getPatronymic() {
         return patronymic;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 }

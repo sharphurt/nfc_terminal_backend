@@ -31,7 +31,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/auth/logout",
             "/api/users/me",
             "/api/companies/create",
-            "/api/companies\\/\\d+"
+            "/api/companies\\/\\d+",
+            "/api/payment/create"
     );
 
     private final JwtTokenProvider tokenProvider;
