@@ -50,6 +50,10 @@
             <column name="updated_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
                 <constraints nullable="false"/>
             </column>
+
+            <column name="logins_count" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 

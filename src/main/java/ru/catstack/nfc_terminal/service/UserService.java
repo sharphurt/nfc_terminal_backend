@@ -93,6 +93,12 @@ public class UserService {
         setUpdatedAtById(id, Instant.now());
     }
 
+    public void increaseLoginsCountById(long id) {
+        userRepository.findById(id).ifPresent(u ->
+            userRepository.updateLoginsCountById(u.getId(), u.getLoginsCount() + 1)
+        );
+    }
+
     private void setUpdatedAtById(Long id, Instant updatedAt) {
         userRepository.setUpdatedAtById(id, updatedAt);
     }

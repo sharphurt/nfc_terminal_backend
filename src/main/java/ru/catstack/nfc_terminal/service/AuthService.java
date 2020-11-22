@@ -68,6 +68,7 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         var session = sessionService.createSession(auth, loginRequest, uniqueKey);
+        userService.increaseLoginsCountById(principal.getId());
         var jwtToken = generateToken(principal, session);
         return new JwtAuthResponse(jwtToken, tokenProvider.getTokenPrefix());
     }

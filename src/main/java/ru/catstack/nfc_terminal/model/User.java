@@ -45,6 +45,9 @@ public class User extends DateAudit {
     @OneToMany(mappedBy = "user")
     private Set<Employee> employees;
 
+    @Column(name = "logins_count")
+    private long loginsCount;
+
     public User() {
     }
 
@@ -58,6 +61,7 @@ public class User extends DateAudit {
         this.userStatus = UserStatus.ACTIVE;
         this.phone = phone;
         this.employees = new HashSet<>();
+        this.loginsCount = 0;
     }
 
     public Long getId() {
@@ -98,5 +102,9 @@ public class User extends DateAudit {
 
     public String getPhone() {
         return phone;
+    }
+
+    public long getLoginsCount() {
+        return loginsCount;
     }
 }

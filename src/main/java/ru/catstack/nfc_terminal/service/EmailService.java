@@ -58,8 +58,8 @@ public class EmailService {
         data.put("company-address", receipt.getCompany().getAddress());
         data.put("inn-number", String.valueOf(receipt.getCompany().getInn()));
         data.put("tax-system", receipt.getCompany().getTaxSystem());
-        data.put("receipt-per-shift-number", String.valueOf(receipt.getId()));
-        data.put("shift-number", String.valueOf(receipt.getSession().getId()));
+        data.put("receipt-per-shift-number", String.valueOf(receipt.getSession().getReceipts().size()));
+        data.put("shift-number", String.valueOf(receipt.getVendor().getLoginsCount()));
 
         var vendorFullname = receipt.getVendor().getLastName() + " " + receipt.getVendor().getFirstName();
         if (receipt.getVendor().getPatronymic() != null)
