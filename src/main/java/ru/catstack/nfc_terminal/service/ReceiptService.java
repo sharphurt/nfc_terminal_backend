@@ -27,6 +27,6 @@ public class ReceiptService {
         var session = sessionService.findByUserIdAndDeviceId(me.getId(), payment.getDeviceId()).get();
         var totalCost = payment.getAmount() * 1;
         var buyerEmail = payment.getBuyerEmail() == null ? "Не указано" : payment.getBuyerEmail();
-        var r = new Receipt(session, company, "Покупка товаров", payment.getAmount(), 1, totalCost, buyerEmail, 123434, 2324);
+        var r = new Receipt(session, company, me, "Покупка товаров", payment.getAmount(), 1, totalCost, buyerEmail, 123434, 2324);
         return receiptRepository.save(r);
     }}

@@ -22,6 +22,10 @@ public class Receipt extends DateAudit {
     @JoinColumn(name = "inn", referencedColumnName = "inn")
     private Company company;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    private User vendor;
+
     @Column(name = "product_name")
     private String productName;
 
@@ -46,9 +50,10 @@ public class Receipt extends DateAudit {
     public Receipt() {
     }
 
-    public Receipt(Session session, Company company, String productName, float productCost, int productAmount, float total, String buyerEmail, long fiscalAccumulator, long fiscalSign) {
+    public Receipt(Session session, Company company, User vendor, String productName, float productCost, int productAmount, float total, String buyerEmail, long fiscalAccumulator, long fiscalSign) {
         this.session = session;
         this.company = company;
+        this.vendor = vendor;
         this.productName = productName;
         this.productCost = productCost;
         this.productAmount = productAmount;
@@ -96,5 +101,9 @@ public class Receipt extends DateAudit {
 
     public long getFiscalSign() {
         return fiscalSign;
+    }
+
+    public User getVendor() {
+        return vendor;
     }
 }

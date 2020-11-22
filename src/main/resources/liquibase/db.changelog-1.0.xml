@@ -229,6 +229,10 @@
                 <constraints nullable="false"/>
             </column>
 
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
             <column name="product_name" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>

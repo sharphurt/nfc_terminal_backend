@@ -14,12 +14,14 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final CompanyService companyService;
     private final ReceiptService receiptService;
+    private final EmailService emailService;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, CompanyService companyService, ReceiptService receiptService) {
+    public PaymentService(PaymentRepository paymentRepository, CompanyService companyService, ReceiptService receiptService, EmailService emailService) {
         this.paymentRepository = paymentRepository;
         this.companyService = companyService;
         this.receiptService = receiptService;
+        this.emailService = emailService;
     }
 
     public PaymentStatus acceptPayment(@NotNull CreatePaymentRequest rq) {
@@ -37,7 +39,9 @@ public class PaymentService {
             var company = companyService.findByInn(rq.getInn()).get();
             companyService.addToBalance(company, rq.getAmount());
             paymentRepository.updateStatusByTransactionalKey(rq.getTransactionalKey(), PaymentStatus.SUCCESSFULLY);
-            receiptService.createReceipt(payment);
+            var receipt = receiptService.createReceipt(payment);
+            if (payment.getBuyerEmail() != null)
+                emailService.sendMail(receipt);
             return PaymentStatus.SUCCESSFULLY;
         }
 
