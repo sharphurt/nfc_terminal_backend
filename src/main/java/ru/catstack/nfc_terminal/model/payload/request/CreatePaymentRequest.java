@@ -2,11 +2,10 @@ package ru.catstack.nfc_terminal.model.payload.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import ru.catstack.nfc_terminal.model.DeviceInfo;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 @ApiModel("Payment request")
 public class CreatePaymentRequest {
@@ -28,14 +27,27 @@ public class CreatePaymentRequest {
     @DecimalMin(value = "0.0099", message = "Amount of money can't be less than 0.01₽")
     private float amount;
 
+    @Valid
+    @NotNull(message = "Device info cannot be null")
+    @ApiModelProperty(value = "Device info", required = true, dataType = "object", allowableValues = "A valid " +
+            "deviceInfo object")
+    private DeviceInfo deviceInfo;
+
+
+    @Email(message = "Email is not valid")
+    @ApiModelProperty(value = "A valid email")
+    private String buyerEmail;
+
     public CreatePaymentRequest() {
     }
 
-    public CreatePaymentRequest(long transactionalKey, long inn, long payerCN, long amount) {
+    public CreatePaymentRequest(long transactionalKey, long inn, long payerCN, long amount, @Valid @NotNull(message = "Device info cannot be null") DeviceInfo deviceInfo, @NotBlank(message = "Email cannot be blank") @Email(message = "Email is not valid") String buyerEmail) {
         this.transactionalKey = transactionalKey;
         this.inn = inn;
         this.payerCN = payerCN;
         this.amount = amount;
+        this.deviceInfo = deviceInfo;
+        this.buyerEmail = buyerEmail;
     }
 
     public long getInn() {
@@ -52,5 +64,13 @@ public class CreatePaymentRequest {
 
     public long getTransactionalKey() {
         return transactionalKey;
+    }
+
+    public DeviceInfo getDeviceInfo() {
+        return deviceInfo;
+    }
+
+    public String getBuyerEmail() {
+        return buyerEmail;
     }
 }

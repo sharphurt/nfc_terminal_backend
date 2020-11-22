@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Service
 public class CompanyService {
-
     private final CompanyRepository companyRepository;
     private final BillService billService;
 

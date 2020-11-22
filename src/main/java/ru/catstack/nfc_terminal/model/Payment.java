@@ -28,14 +28,22 @@ public class Payment extends DateAudit {
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
+    @Column(name = "device_id")
+    private String deviceId;
+
+    @Column(name = "buyer_email")
+    private String buyerEmail;
+
     public Payment() {
     }
 
-    public Payment(long transactionalKey, long payerCardNumber, long vendorId, float amount) {
+    public Payment(long transactionalKey, long payerCardNumber, long vendorId, float amount, String deviceId, String buyerEmail) {
         this.transactionalKey = transactionalKey;
         this.payerCardNumber = payerCardNumber;
         this.vendorId = vendorId;
         this.amount = amount;
+        this.deviceId = deviceId;
+        this.buyerEmail = buyerEmail;
         this.status = PaymentStatus.WAITING;
     }
 
@@ -65,5 +73,13 @@ public class Payment extends DateAudit {
 
     public void setStatus(PaymentStatus status) {
         this.status = status;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public String getBuyerEmail() {
+        return buyerEmail;
     }
 }

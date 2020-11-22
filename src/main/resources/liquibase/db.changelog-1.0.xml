@@ -195,6 +195,68 @@
                 <constraints nullable="false"/>
             </column>
 
+            <column name="device_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="buyer_email" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="1.0.6" author="sharphurt">
+        <!--Receipt table-->
+        <createTable tableName="receipt">
+            <column name="receipt_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="session_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="inn" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="product_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="product_cost" type="REAL">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="product_amount" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="total" type="REAL">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="buyer_email" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="ficsal_accum_number" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="ficsal_sign" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
             <column name="created_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
                 <constraints nullable="false"/>
             </column>

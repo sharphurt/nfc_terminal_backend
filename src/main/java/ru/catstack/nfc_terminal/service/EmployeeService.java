@@ -32,5 +32,9 @@ public class EmployeeService {
         return employeeRepository.findByUserAndCompany(user, company);
     }
 
+    Optional<Employee> findByUser(User user) {
+        return employeeRepository.findByUser(user);
+    }
+
 
 }

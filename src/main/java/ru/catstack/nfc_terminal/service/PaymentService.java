@@ -13,11 +13,13 @@ import ru.catstack.nfc_terminal.repository.PaymentRepository;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final CompanyService companyService;
+    private final ReceiptService receiptService;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, CompanyService companyService) {
+    public PaymentService(PaymentRepository paymentRepository, CompanyService companyService, ReceiptService receiptService) {
         this.paymentRepository = paymentRepository;
         this.companyService = companyService;
+        this.receiptService = receiptService;
     }
 
     public PaymentStatus acceptPayment(@NotNull CreatePaymentRequest rq) {
@@ -27,7 +29,7 @@ public class PaymentService {
         if (paymentRepository.existsByTransactionalKey(rq.getTransactionalKey()))
             return paymentRepository.findByTransactionalKey(rq.getTransactionalKey()).get().getStatus();
 
-        var payment = new Payment(rq.getTransactionalKey(), rq.getPayerCN(), rq.getInn(), rq.getAmount());
+        var payment = new Payment(rq.getTransactionalKey(), rq.getPayerCN(), rq.getInn(), rq.getAmount(), rq.getDeviceInfo().getDeviceId(), rq.getBuyerEmail());
         paymentRepository.save(payment);
 
         var confirmation = GetBankConfirmation(rq.getPayerCN(), rq.getAmount());
@@ -35,6 +37,7 @@ public class PaymentService {
             var company = companyService.findByInn(rq.getInn()).get();
             companyService.addToBalance(company, rq.getAmount());
             paymentRepository.updateStatusByTransactionalKey(rq.getTransactionalKey(), PaymentStatus.SUCCESSFULLY);
+            receiptService.createReceipt(payment);
             return PaymentStatus.SUCCESSFULLY;
         }
 
@@ -44,4 +47,5 @@ public class PaymentService {
     private boolean GetBankConfirmation(long payerCN, float amount) {
         return true;
     }
+
 }
