@@ -49,66 +49,81 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public ApiErrorResponse handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-        return new ApiErrorResponse(ex.getMessage(), 404, ex.getClass().getName(), pathFromRequest(request));
+        return new ApiErrorResponse(ex.getMessage(), 401, ex.getClass().getName());
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ApiErrorResponse handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+        return new ApiErrorResponse(ex.getMessage(), 403, ex.getClass().getName());
+    }
+
+
+    @ExceptionHandler(value = ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ApiErrorResponse handleForbiddenException(ForbiddenException ex, WebRequest request) {
+        return new ApiErrorResponse(ex.getMessage(), 403, ex.getClass().getName());
     }
 
     @ExceptionHandler(value = ResourceAlreadyInUseException.class)
     @ResponseStatus(HttpStatus.IM_USED)
     @ResponseBody
     public ApiErrorResponse handleResourceAlreadyInUseException(ResourceAlreadyInUseException ex, WebRequest request) {
-        return new ApiErrorResponse(ex.getMessage(), 226, ex.getClass().getName(), pathFromRequest(request));
+        return new ApiErrorResponse(ex.getMessage(), 226, ex.getClass().getName());
     }
 
     @ExceptionHandler(value = BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ApiErrorResponse handleBadRequestException(BadRequestException ex, WebRequest request) {
-        return new ApiErrorResponse(ex.getMessage(), 400, ex.getClass().getName(), pathFromRequest(request));
+        return new ApiErrorResponse(ex.getMessage(), 400, ex.getClass().getName());
     }
 
     @ExceptionHandler(value = UsernameNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public ApiErrorResponse handleUsernameNotFoundException(UsernameNotFoundException ex, WebRequest request) {
-        return new ApiErrorResponse(ex.getMessage(), 404, ex.getClass().getName(), pathFromRequest(request));
+        return new ApiErrorResponse(ex.getMessage(), 401, ex.getClass().getName());
     }
 
     @ExceptionHandler(value = UserLoginException.class)
-    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     public ApiErrorResponse handleUserLoginException(UserLoginException ex, WebRequest request) {
-        return new ApiErrorResponse(ex.getMessage(), 417, ex.getClass().getName(), pathFromRequest(request));
+        return new ApiErrorResponse(ex.getMessage(), 409, ex.getClass().getName());
     }
 
     @ExceptionHandler(value = BadCredentialsException.class)
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     @ResponseBody
     public ApiErrorResponse handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
-        return new ApiErrorResponse(ex.getMessage(), 417, ex.getClass().getName(), pathFromRequest(request));
+        return new ApiErrorResponse(ex.getMessage(), 417, ex.getClass().getName());
     }
 
     @ExceptionHandler(value = ObjectSavingException.class)
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     @ResponseBody
     public ApiErrorResponse handleUserRegistrationException(@NotNull ObjectSavingException ex, WebRequest request) {
-        return new ApiErrorResponse(ex.getMessage(), 417, ex.getClass().getName(), pathFromRequest(request));
+        return new ApiErrorResponse(ex.getMessage(), 417, ex.getClass().getName());
     }
 
     @ExceptionHandler(value = InvalidJwtTokenException.class)
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     @ResponseBody
     public ApiErrorResponse handleInvalidJwtTokenException(InvalidJwtTokenException ex, WebRequest request) {
-        return new ApiErrorResponse(ex.getMessage(), 417, ex.getClass().getName(), pathFromRequest(request));
+        return new ApiErrorResponse(ex.getMessage(), 417, ex.getClass().getName());
     }
 
     @ExceptionHandler(value = UserLogOutException.class)
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     @ResponseBody
     public ApiErrorResponse handleUserLogOutException(UserLogOutException ex, WebRequest request) {
-        return new ApiErrorResponse(ex.getMessage(), 417, ex.getClass().getName(), pathFromRequest(request));
+        return new ApiErrorResponse(ex.getMessage(), 417, ex.getClass().getName());
     }
 
     @Override
@@ -119,7 +134,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .findFirst()
                 .orElse(ex.getMessage());
-        var response = new ApiErrorResponse(errorMessage, 417, ex.getClass().getName(), pathFromRequest(request));
+        var response = new ApiErrorResponse(errorMessage, 417, ex.getClass().getName());
         return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
     }
 }

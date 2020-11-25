@@ -2,30 +2,24 @@ package ru.catstack.nfc_terminal.model.payload.response;
 
 public class ErrorBody {
     private final String message;
-    private final String cause;
-    private final String path;
-    private final Integer code;
+    private final String errorCode;
+    private final Integer httpCode;
 
-    public ErrorBody(String message, int code, String cause, String path) {
-        this.code = code;
+    public ErrorBody(String message, int httpCode, String errorCode) {
+        this.httpCode = httpCode;
         this.message = message;
-        this.cause = cause;
-        this.path = path;
+        this.errorCode = errorCode;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public String getCause() {
-        return cause;
+    public String getErrorCode() {
+        return errorCode;
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public Integer getCode() {
-        return code;
+    public Integer getHttpCode() {
+        return httpCode;
     }
 }

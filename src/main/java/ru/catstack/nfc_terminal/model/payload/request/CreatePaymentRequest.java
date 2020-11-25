@@ -9,9 +9,9 @@ import javax.validation.constraints.*;
 
 @ApiModel("Payment request")
 public class CreatePaymentRequest {
-    @ApiModelProperty(value = "Transaction key")
-    @NotNull(message = "Transaction key can't be null")
-    private long transactionalKey;
+    @ApiModelProperty(value = "Idempotence key")
+    @NotNull(message = "Idempotence key can't be null")
+    private long idempotenceKey;
 
     @ApiModelProperty(value = "inn")
     @NotNull(message = "INN number can't be null")
@@ -41,8 +41,8 @@ public class CreatePaymentRequest {
     public CreatePaymentRequest() {
     }
 
-    public CreatePaymentRequest(long transactionalKey, long inn, long payerCN, long amount, @Valid @NotNull(message = "Device info cannot be null") DeviceInfo deviceInfo, @NotBlank(message = "Email cannot be blank") @Email(message = "Email is not valid") String buyerEmail) {
-        this.transactionalKey = transactionalKey;
+    public CreatePaymentRequest(long idempotenceKey, long inn, long payerCN, long amount, @Valid @NotNull(message = "Device info cannot be null") DeviceInfo deviceInfo, @NotBlank(message = "Email cannot be blank") @Email(message = "Email is not valid") String buyerEmail) {
+        this.idempotenceKey = idempotenceKey;
         this.inn = inn;
         this.payerCN = payerCN;
         this.amount = amount;
@@ -62,8 +62,8 @@ public class CreatePaymentRequest {
         return amount;
     }
 
-    public long getTransactionalKey() {
-        return transactionalKey;
+    public long getIdempotenceKey() {
+        return idempotenceKey;
     }
 
     public DeviceInfo getDeviceInfo() {

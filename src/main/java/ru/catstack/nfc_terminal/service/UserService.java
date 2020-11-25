@@ -15,6 +15,7 @@ import ru.catstack.nfc_terminal.security.jwt.JwtTokenProvider;
 import ru.catstack.nfc_terminal.security.jwt.JwtUser;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -31,8 +32,8 @@ public class UserService {
         return userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
     }
 
-    public User findByEmailOrThrow(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public User findByIdOrThrow(Long id) {
