@@ -4,6 +4,8 @@ import ru.catstack.nfc_terminal.model.audit.DateAudit;
 import ru.catstack.nfc_terminal.model.enums.DeviceType;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "session")
 @Table(name = "session")
@@ -11,10 +13,13 @@ public class Session extends DateAudit {
     @Id
     @Column(name = "session_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
+
+    @Column(name = "unique_key")
+    private long uniqueKey;
 
     @Column(name = "user_id")
-    private Long userId;
+    private long userId;
 
     @Column(name = "device_type")
     @Enumerated(value = EnumType.STRING)
@@ -23,16 +28,21 @@ public class Session extends DateAudit {
     @Column(name = "device_id", nullable = false)
     private String deviceId;
 
+    @OneToMany(mappedBy = "session")
+    private Set<Receipt> receipts;
+
     public Session() {
     }
 
-    public Session(Long userId, DeviceInfo deviceInfo) {
+    public Session(Long userId, DeviceInfo deviceInfo, long uniqueKey) {
         this.userId = userId;
         this.deviceType = deviceInfo.getDeviceType();
         this.deviceId = deviceInfo.getDeviceId();
+        this.uniqueKey = uniqueKey;
+        this.receipts = new HashSet<>();
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
@@ -50,5 +60,13 @@ public class Session extends DateAudit {
 
     public Long getUserId() {
         return userId;
+    }
+
+    public long getUniqueKey() {
+        return uniqueKey;
+    }
+
+    public Set<Receipt> getReceipts() {
+        return receipts;
     }
 }

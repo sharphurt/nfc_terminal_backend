@@ -1,15 +1,18 @@
 package ru.catstack.nfc_terminal.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.catstack.nfc_terminal.model.audit.DateAudit;
 
 import javax.persistence.*;
 
 @Entity
 public class Employee extends DateAudit {
+    @JsonIgnore
     @Id
-            @Column(name = "id")
+    @Column(name = "id")
     long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
@@ -18,17 +21,12 @@ public class Employee extends DateAudit {
     @JoinColumn(name = "inn")
     Company company;
 
-    @Column(name = "appointment")
-    String appointment;
-
     public Employee() {
     }
 
-    public Employee(long id, User user, Company company, String appointment) {
-        this.id = id;
+    public Employee(User user, Company company) {
         this.user = user;
         this.company = company;
-        this.appointment = appointment;
     }
 
     public long getId() {
@@ -41,9 +39,5 @@ public class Employee extends DateAudit {
 
     public Company getCompany() {
         return company;
-    }
-
-    public String getAppointment() {
-        return appointment;
     }
 }

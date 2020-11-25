@@ -35,25 +35,33 @@ public class User extends DateAudit {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "phone")
+    private String phone;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private Status status;
+    private UserStatus userStatus;
 
     @OneToMany(mappedBy = "user")
     private Set<Employee> employees;
 
+    @Column(name = "logins_count")
+    private long loginsCount;
+
     public User() {
     }
 
-    public User(String email, String password, String username, String firstName, String lastName, String patronymic) {
+    public User(String email, String password, String username, String firstName, String lastName, String patronymic, String phone) {
         this.email = email;
         this.password = password;
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;
-        this.status = Status.ACTIVE;
+        this.userStatus = UserStatus.ACTIVE;
+        this.phone = phone;
         this.employees = new HashSet<>();
+        this.loginsCount = 0;
     }
 
     public Long getId() {
@@ -72,8 +80,8 @@ public class User extends DateAudit {
         return password;
     }
 
-    public Status getStatus() {
-        return status;
+    public UserStatus getUserStatus() {
+        return userStatus;
     }
 
     public String getFirstName() {
@@ -90,5 +98,13 @@ public class User extends DateAudit {
 
     public Set<Employee> getRegistrations() {
         return employees;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public long getLoginsCount() {
+        return loginsCount;
     }
 }

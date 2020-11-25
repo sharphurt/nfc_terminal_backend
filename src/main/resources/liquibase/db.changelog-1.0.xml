@@ -27,12 +27,20 @@
                 <constraints nullable="true" unique="false"/>
             </column>
 
+            <column name="phone" type="VARCHAR(20)">
+                <constraints nullable="false" unique="false"/>
+            </column>
+
             <column name="email" type="VARCHAR(100)">
                 <constraints nullable="false" unique="true"/>
             </column>
 
             <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR(10)">
+                <constraints nullable="false" unique="false"/>
             </column>
 
             <column name="created_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
@@ -43,7 +51,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="status" type="VARCHAR(25)" defaultValue="ACTIVE">
+            <column name="logins_count" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -59,6 +67,10 @@
 
             <column name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
+            </column>
+
+            <column name="unique_key" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
             </column>
 
             <column name="device_type" type="VARCHAR(30)">
@@ -81,27 +93,28 @@
 
 
     <changeSet id="1.0.2" author="sharphurt">
-        <!--Company table-->
         <createTable tableName="company">
             <column name="inn" type="BIGINT">
-                <constraints primaryKey="true" nullable="true"/>
-            </column>
-
-            <column name="company_name" type="VARCHAR(255)">
-                <constraints nullable="true"/>
-            </column>
-
-            <column name="tax_system" type="VARCHAR(10)">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="payments_address" type="VARCHAR(255)">
-                <constraints nullable="false" unique="false"/>
+                <constraints primaryKey="true" nullable="false" unique="true"/>
             </column>
 
             <column name="kkt" type="BIGINT">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
+
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="tax_system" type="VARCHAR(5)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="payment_address" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="bill_id" type="BIGINT"/>
 
             <column name="created_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
                 <constraints nullable="false"/>
@@ -113,12 +126,11 @@
         </createTable>
     </changeSet>
 
-
     <changeSet id="1.0.3" author="sharphurt">
         <!--Employee table-->
         <createTable tableName="employee">
-            <column name="id" type="BIGINT">
-                <constraints primaryKey="true" nullable="true"/>
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
             </column>
 
             <column name="user_id" type="BIGINT">
@@ -129,8 +141,25 @@
                 <constraints nullable="false" unique="false"/>
             </column>
 
-            <column name="appointment" type="VARCHAR(100)">
-                <constraints nullable="false" unique="false"/>
+            <column name="created_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.4" author="sharphurt">
+        <!--Bill table-->
+        <createTable tableName="bill">
+            <column name="bill_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="balance" type="REAL">
+                <constraints nullable="false"/>
             </column>
 
             <column name="created_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
@@ -143,6 +172,108 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="1.0.5" author="sharphurt">
+        <!--Payment table-->
+        <createTable tableName="payment">
+            <column name="payment_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="transactional_key" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="payer_CN" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="vendor_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="amount" type="REAL">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR(15)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="device_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="buyer_email" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="1.0.6" author="sharphurt">
+        <!--Receipt table-->
+        <createTable tableName="receipt">
+            <column name="receipt_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="session_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="inn" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="product_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="product_cost" type="REAL">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="product_amount" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="total" type="REAL">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="buyer_email" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="ficsal_accum_number" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="ficsal_sign" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 
 
 </databaseChangeLog>

@@ -16,4 +16,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     void deleteById(long id);
 
     boolean existsByDeviceId(String deviceId);
+
+    boolean existsByUniqueKey(long key);
 }

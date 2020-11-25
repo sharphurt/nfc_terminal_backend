@@ -2,7 +2,6 @@ package ru.catstack.nfc_terminal.security.jwt;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.catstack.nfc_terminal.exception.InvalidJwtTokenException;
 
@@ -30,10 +29,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if (NeedToCheckRequest(request)) {
             try {
                 var token = jwtTokenProvider.resolveToken(request);
-                if (StringUtils.hasText(token)) {
+                if (jwtTokenProvider.isTokenValid(token)) {
                     var authentication = jwtTokenProvider.getAuthentication(token);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
+                else
+                    throw new InvalidJwtTokenException("Request requires authentication");
             } catch (Exception ex) {
                 throw new InvalidJwtTokenException("Request requires authentication");
             }

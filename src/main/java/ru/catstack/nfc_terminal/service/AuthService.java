@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.catstack.nfc_terminal.exception.ResourceAlreadyInUseException;
 import ru.catstack.nfc_terminal.exception.UserLogOutException;
 import ru.catstack.nfc_terminal.exception.UserLoginException;
+import ru.catstack.nfc_terminal.model.Session;
 import ru.catstack.nfc_terminal.model.User;
 import ru.catstack.nfc_terminal.model.payload.request.LogOutRequest;
 import ru.catstack.nfc_terminal.model.payload.request.LoginRequest;
@@ -18,6 +19,7 @@ import ru.catstack.nfc_terminal.security.jwt.JwtTokenProvider;
 import ru.catstack.nfc_terminal.security.jwt.JwtUser;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class AuthService {
@@ -25,6 +27,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final SessionService sessionService;
     private final JwtTokenProvider tokenProvider;
+    private final Random random = new Random();
 
     @Autowired
     public AuthService(UserService userService,
@@ -58,12 +61,15 @@ public class AuthService {
     }
 
     public JwtAuthResponse authenticateUser(LoginRequest loginRequest) {
+        var uniqueKey = random.nextLong();
+
         var auth = createAuthenticationOrThrow(loginRequest.getUsername(), loginRequest.getPassword());
         var principal = (JwtUser) auth.getPrincipal();
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        sessionService.createSession(auth, loginRequest);
-        var jwtToken = generateToken(principal);
+        var session = sessionService.createSession(auth, loginRequest, uniqueKey);
+        userService.increaseLoginsCountById(principal.getId());
+        var jwtToken = generateToken(principal, session);
         return new JwtAuthResponse(jwtToken, tokenProvider.getTokenPrefix());
     }
 
@@ -73,8 +79,8 @@ public class AuthService {
                 .orElseThrow(() -> new UserLoginException("Couldn't login user [" + username + "]"));
     }
 
-    public String generateToken(JwtUser user) {
-        return tokenProvider.createToken(user);
+    public String generateToken(JwtUser user, Session session) {
+        return tokenProvider.createToken(user, session);
     }
 
 

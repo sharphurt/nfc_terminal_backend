@@ -53,7 +53,7 @@ public class UserService {
 
     User createUser(RegistrationRequest request) {
         var user = new User(request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getUsername(),
-                request.getFirstName(), request.getLastName(), request.getPatronymic());
+                request.getFirstName(), request.getLastName(), request.getPatronymic(), request.getPhone());
         return save(user);
     }
 
@@ -91,6 +91,12 @@ public class UserService {
     public void updatePasswordById(Long id, String password) {
         userRepository.updatePasswordById(id, passwordEncoder.encode(password));
         setUpdatedAtById(id, Instant.now());
+    }
+
+    public void increaseLoginsCountById(long id) {
+        userRepository.findById(id).ifPresent(u ->
+            userRepository.updateLoginsCountById(u.getId(), u.getLoginsCount() + 1)
+        );
     }
 
     private void setUpdatedAtById(Long id, Instant updatedAt) {

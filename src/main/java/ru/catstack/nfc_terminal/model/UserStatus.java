@@ -1,5 +1,5 @@
 package ru.catstack.nfc_terminal.model;
 
-public enum Status {
+public enum UserStatus {
     ACTIVE, LOCKED, DELETED
 }

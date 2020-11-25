@@ -28,7 +28,6 @@ public class CreateCompanyRequest {
     @NotNull(message = "Company address can't be null")
     private String address;
 
-
     @ApiModelProperty(value = "A valid KKT", required = true)
     @Min(value = 1_000_000_000_000_000L, message = "KKT length must be exactly 16 digits")
     @Max(value = 9_999_999_999_999_999L, message = "KKT length must be exactly 16 digits")

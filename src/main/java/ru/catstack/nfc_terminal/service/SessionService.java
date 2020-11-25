@@ -25,6 +25,10 @@ public class SessionService {
         return sessionRepository.findByUserIdAndDeviceId(userId, deviceId);
     }
 
+    public boolean existsByUniqueKey(long key) {
+        return sessionRepository.existsByUniqueKey(key);
+    }
+
     void deleteBySessionId(long sessionId) {
         sessionRepository.deleteById(sessionId);
     }
@@ -33,18 +37,18 @@ public class SessionService {
         sessionRepository.deleteByDeviceIdAndUserId(deviceId, userId);
     }
 
-    public void createSession(Authentication auth, LoginRequest loginRequest) {
+    public Session createSession(Authentication auth, LoginRequest loginRequest, long uniqueKey) {
         var user = (JwtUser) auth.getPrincipal();
         if (isDeviceAlreadyExists(loginRequest.getDeviceInfo())) {
             var session = findByUserIdAndDeviceId(user.getId(), loginRequest.getDeviceInfo().getDeviceId());
             session.ifPresent(sess -> deleteBySessionId(sess.getId()));
         }
-        var newSession = new Session(user.getId(), loginRequest.getDeviceInfo());
-        save(newSession);
+        var newSession = new Session(user.getId(), loginRequest.getDeviceInfo(), uniqueKey);
+        return save(newSession);
     }
 
-    void save(Session session) {
-        sessionRepository.save(session);
+    Session save(Session session) {
+        return sessionRepository.save(session);
     }
 
     boolean isDeviceAlreadyExists(DeviceInfo deviceInfo) {

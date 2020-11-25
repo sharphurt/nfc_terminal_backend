@@ -24,14 +24,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/auth/login",
             "/api/auth/register",
             "/api/auth/checkEmail",
-            "/api/auth/checkUsername"
+            "/api/auth/checkUsername",
+            "/api/email/send"
     );
 
     public static final List<String> authenticatedEndpoints = List.of(
             "/api/auth/logout",
-            "/api/auth/about",
+            "/api/users/me",
             "/api/companies/create",
-            "/api/companies\\/\\d+"
+            "/api/companies\\/\\d+",
+            "/api/payment/create"
     );
 
     private final JwtTokenProvider tokenProvider;
