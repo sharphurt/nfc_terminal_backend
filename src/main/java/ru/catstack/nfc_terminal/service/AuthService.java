@@ -63,7 +63,9 @@ public class AuthService {
     public JwtAuthResponse authenticateUser(LoginRequest loginRequest) {
         var uniqueKey = random.nextLong();
 
-        var auth = createAuthenticationOrThrow(loginRequest.getUsername(), loginRequest.getPassword());
+        var username = userService.findByEmail(loginRequest.getEmail()).map(User::getUsername).orElseThrow(() -> new UserLoginException(""));
+
+        var auth = createAuthenticationOrThrow(username, loginRequest.getPassword());
         var principal = (JwtUser) auth.getPrincipal();
         SecurityContextHolder.getContext().setAuthentication(auth);
 

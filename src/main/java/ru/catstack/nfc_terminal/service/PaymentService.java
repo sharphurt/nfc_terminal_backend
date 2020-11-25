@@ -28,17 +28,17 @@ public class PaymentService {
         if (!companyService.existsByInn(rq.getInn()))
             throw new ResourceNotFoundException("Company", "INN", rq.getInn());
 
-        if (paymentRepository.existsByTransactionalKey(rq.getTransactionalKey()))
-            return paymentRepository.findByTransactionalKey(rq.getTransactionalKey()).get().getStatus();
+        if (paymentRepository.existsByTransactionalKey(rq.getIdempotenceKey()))
+            return paymentRepository.findByTransactionalKey(rq.getIdempotenceKey()).get().getStatus();
 
-        var payment = new Payment(rq.getTransactionalKey(), rq.getPayerCN(), rq.getInn(), rq.getAmount(), rq.getDeviceInfo().getDeviceId(), rq.getBuyerEmail());
+        var payment = new Payment(rq.getIdempotenceKey(), rq.getPayerCN(), rq.getInn(), rq.getAmount(), rq.getDeviceInfo().getDeviceId(), rq.getBuyerEmail());
         paymentRepository.save(payment);
 
         var confirmation = GetBankConfirmation(rq.getPayerCN(), rq.getAmount());
         if (confirmation) {
             var company = companyService.findByInn(rq.getInn()).get();
             companyService.addToBalance(company, rq.getAmount());
-            paymentRepository.updateStatusByTransactionalKey(rq.getTransactionalKey(), PaymentStatus.SUCCESSFULLY);
+            paymentRepository.updateStatusByTransactionalKey(rq.getIdempotenceKey(), PaymentStatus.SUCCESSFULLY);
             var receipt = receiptService.createReceipt(payment);
             if (payment.getBuyerEmail() != null)
                 emailService.sendMail(receipt);

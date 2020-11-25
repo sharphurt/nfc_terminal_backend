@@ -2,6 +2,8 @@ package ru.catstack.nfc_terminal.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.catstack.nfc_terminal.exception.ForbiddenException;
+import ru.catstack.nfc_terminal.exception.ResourceNotFoundException;
 import ru.catstack.nfc_terminal.model.Payment;
 import ru.catstack.nfc_terminal.model.Receipt;
 import ru.catstack.nfc_terminal.repository.ReceiptRepository;
@@ -23,10 +25,16 @@ public class ReceiptService {
 
     public Receipt createReceipt(Payment payment) {
         var me = userService.getLoggedInUser();
+        if (!companyService.existsByInn(payment.getVendorId()))
+            throw new ResourceNotFoundException("Company", "INN", payment.getVendorId());
         var company = companyService.findByInn(payment.getVendorId()).get();
-        var session = sessionService.findByUserIdAndDeviceId(me.getId(), payment.getDeviceId()).get();
-        var totalCost = payment.getAmount() * 1;
-        var buyerEmail = payment.getBuyerEmail() == null ? "Не указано" : payment.getBuyerEmail();
-        var r = new Receipt(session, company, me, "Покупка товаров", payment.getAmount(), 1, totalCost, buyerEmail, 123434, 2324);
-        return receiptRepository.save(r);
+        return sessionService.findByUserIdAndDeviceId(me.getId(), payment.getDeviceId()).map(
+                s -> {
+                    var totalCost = payment.getAmount() * 1;
+                    var buyerEmail = payment.getBuyerEmail() == null ? "Не указано" : payment.getBuyerEmail();
+                    var r = new Receipt(s, company, me, "Покупка товаров", payment.getAmount(), 1, totalCost, buyerEmail, 123434, 2324);
+                    return receiptRepository.save(r);
+                }
+        ).orElseThrow(() -> new ForbiddenException("Device id is invalid"));
+
     }}
