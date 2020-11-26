@@ -30,9 +30,9 @@ public class ReceiptService {
         var company = companyService.findByInn(payment.getVendorId()).get();
         return sessionService.findByUserIdAndDeviceId(me.getId(), payment.getDeviceId()).map(
                 s -> {
-                    var totalCost = payment.getAmount() * 1;
+                    var totalCost = payment.getCost() * payment.getAmount();
                     var buyerEmail = payment.getBuyerEmail() == null ? "Не указано" : payment.getBuyerEmail();
-                    var r = new Receipt(s, company, me, "Покупка товаров", payment.getAmount(), 1, totalCost, buyerEmail, 123434, 2324);
+                    var r = new Receipt(s, company, me, payment.getTitle(), payment.getCost(), payment.getAmount(), totalCost, buyerEmail);
                     return receiptRepository.save(r);
                 }
         ).orElseThrow(() -> new ForbiddenException("Device id is invalid"));

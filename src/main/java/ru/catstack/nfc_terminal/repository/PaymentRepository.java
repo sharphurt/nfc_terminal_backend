@@ -11,13 +11,13 @@ import ru.catstack.nfc_terminal.model.enums.PaymentStatus;
 import java.util.Optional;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
-    boolean existsByTransactionalKey(long key);
+    boolean existsByIdempotenceKey(long key);
 
-    Optional<Payment> findByTransactionalKey(long key);
+    Optional<Payment> findByIdempotenceKey(long key);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Payment p SET p.status = :status WHERE p.transactionalKey = :key")
-    void updateStatusByTransactionalKey(@Param("key") long key, @Param("status") PaymentStatus status);
+    @Query("UPDATE Payment p SET p.status = :status WHERE p.idempotenceKey = :key")
+    void updateStatusByIdempotenceKey(@Param("key") long key, @Param("status") PaymentStatus status);
 
 }
