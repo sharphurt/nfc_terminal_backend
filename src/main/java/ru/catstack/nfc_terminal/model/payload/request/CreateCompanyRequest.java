@@ -18,7 +18,7 @@ public class CreateCompanyRequest {
     private long inn;
 
     @ApiModelProperty(value = "Tax system", allowableValues = "NonEmpty String")
-    @Pattern(regexp = "ЕНВД|ЕСХН|СРП|УСН|ЕНВД-ЕСХН|УСН-ЕНВД", message = "Invalid tax system")
+    @Pattern(regexp = "ЕНВД|ЕСХН|СРП|УСН|ЕНВД-ЕСХН|УСН-ЕНВД|ОСН", message = "Invalid tax system")
     @NotBlank(message = "Tax system can't be blank")
     @NotNull(message = "Tax system can't be null")
     private String taxSystem;

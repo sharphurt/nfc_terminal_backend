@@ -43,10 +43,13 @@ public class AuthService {
     public Optional<User> registerUser(RegistrationRequest request) {
         var email = request.getEmail();
         var username = request.getUsername();
+        var phone = request.getPhone();
         if (emailAlreadyExists(email))
             throw new ResourceAlreadyInUseException("Email", "address", email);
         if (usernameAlreadyExists(username))
             throw new ResourceAlreadyInUseException("Username", "value", username);
+        if (phoneAlreadyExists(phone))
+            throw new ResourceAlreadyInUseException("Phone", "value", phone);
 
         var registeredNewUser = userService.createUser(request);
         return Optional.ofNullable(registeredNewUser);
@@ -58,6 +61,10 @@ public class AuthService {
 
     public boolean usernameAlreadyExists(String username) {
         return userService.existsByUsername(username);
+    }
+
+    public boolean phoneAlreadyExists(String phone) {
+        return userService.existsByPhone(phone);
     }
 
     public JwtAuthResponse authenticateUser(LoginRequest loginRequest) {

@@ -33,6 +33,12 @@ public class AuthenticationController {
         return new ApiResponse(usernameExists);
     }
 
+    @GetMapping("/checkPhone")
+    public ApiResponse checkPhoneInUse(@RequestParam("phone") String phone) {
+        var phoneExists = authService.phoneAlreadyExists(phone);
+        return new ApiResponse(phoneExists);
+    }
+
     @PostMapping("/login")
     public ApiResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         var response = authService.authenticateUser(loginRequest);
