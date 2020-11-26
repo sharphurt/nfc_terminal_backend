@@ -31,6 +31,12 @@ public class Company extends DateAudit {
     @Column(name = "kkt")
     private long kkt;
 
+    @Column(name = "fiscal_sign")
+    private long fiscalSign;
+
+    @Column(name = "fiscal_accumulator")
+    private long fiscalAccumulator;
+
     @OneToOne
     @JoinColumn(name = "bill_id", referencedColumnName = "bill_id")
     private Bill bill;
@@ -38,12 +44,14 @@ public class Company extends DateAudit {
     public Company() {
     }
 
-    public Company(String companyName, long inn, String taxSystem, String address, long kkt, Bill bill) {
+    public Company(String companyName, long inn, String taxSystem, String address, long kkt, long fiscalSign, long fiscalAccumulator, Bill bill) {
         this.companyName = companyName;
         this.inn = inn;
         this.taxSystem = taxSystem;
         this.address = address;
         this.kkt = kkt;
+        this.fiscalSign = fiscalSign;
+        this.fiscalAccumulator = fiscalAccumulator;
         this.employees = new HashSet<>();
         this.bill = bill;
     }
@@ -74,5 +82,13 @@ public class Company extends DateAudit {
 
     public Bill getBill() {
         return bill;
+    }
+
+    public long getFiscalSign() {
+        return fiscalSign;
+    }
+
+    public long getFiscalAccumulator() {
+        return fiscalAccumulator;
     }
 }

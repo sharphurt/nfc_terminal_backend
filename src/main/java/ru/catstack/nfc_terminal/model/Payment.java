@@ -13,7 +13,10 @@ public class Payment extends DateAudit {
     private long id;
 
     @Column(name = "transactional_key")
-    private long transactionalKey;
+    private long idempotenceKey;
+
+    @Column(name = "title")
+    private String title;
 
     @Column(name = "payer_CN")
     private long payerCardNumber;
@@ -21,8 +24,11 @@ public class Payment extends DateAudit {
     @Column(name = "vendor_id")
     private long vendorId;
 
+    @Column(name = "cost")
+    private float cost;
+
     @Column(name = "amount")
-    private float amount;
+    private long amount;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -37,10 +43,12 @@ public class Payment extends DateAudit {
     public Payment() {
     }
 
-    public Payment(long transactionalKey, long payerCardNumber, long vendorId, float amount, String deviceId, String buyerEmail) {
-        this.transactionalKey = transactionalKey;
+    public Payment(long idempotenceKey, String title, long payerCardNumber, long vendorId, float cost, long amount, String deviceId, String buyerEmail) {
+        this.idempotenceKey = idempotenceKey;
+        this.title = title;
         this.payerCardNumber = payerCardNumber;
         this.vendorId = vendorId;
+        this.cost = cost;
         this.amount = amount;
         this.deviceId = deviceId;
         this.buyerEmail = buyerEmail;
@@ -51,8 +59,8 @@ public class Payment extends DateAudit {
         return id;
     }
 
-    public long getTransactionalKey() {
-        return transactionalKey;
+    public long getIdempotenceKey() {
+        return idempotenceKey;
     }
 
     public long getPayerCardNumber() {
@@ -63,8 +71,8 @@ public class Payment extends DateAudit {
         return vendorId;
     }
 
-    public float getAmount() {
-        return amount;
+    public float getCost() {
+        return cost;
     }
 
     public PaymentStatus getStatus() {
@@ -81,5 +89,13 @@ public class Payment extends DateAudit {
 
     public String getBuyerEmail() {
         return buyerEmail;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public long getAmount() {
+        return amount;
     }
 }

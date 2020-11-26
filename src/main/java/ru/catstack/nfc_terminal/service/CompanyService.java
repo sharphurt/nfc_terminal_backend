@@ -9,11 +9,13 @@ import ru.catstack.nfc_terminal.model.payload.request.CreateCompanyRequest;
 import ru.catstack.nfc_terminal.repository.CompanyRepository;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class CompanyService {
     private final CompanyRepository companyRepository;
     private final BillService billService;
+    private final Random random = new Random();
 
     @Autowired
     public CompanyService(CompanyRepository companyRepository, BillService billService) {
@@ -30,7 +32,7 @@ public class CompanyService {
             throw new ResourceAlreadyInUseException("Company name", "value", request.getName());
 
         var bill = billService.save(new Bill());
-        var company = new Company(request.getName(), request.getInn(), request.getTaxSystem(), request.getAddress(), request.getKkt(), bill);
+        var company = new Company(request.getName(), request.getInn(), request.getTaxSystem(), request.getAddress(), request.getKkt(), Math.abs(random.nextLong()), Math.abs(random.nextLong()), bill);
         save(company);
 
         return findByInn(company.getInn());

@@ -114,6 +114,14 @@
                 <constraints nullable="false"/>
             </column>
 
+            <column name="fiscal_sign" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="fiscal_accumulator" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
             <column name="bill_id" type="BIGINT"/>
 
             <column name="created_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
@@ -191,7 +199,15 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="amount" type="REAL">
+            <column name="title" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="cost" type="REAL">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="amount" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
 
@@ -257,14 +273,6 @@
                 <constraints nullable="true"/>
             </column>
 
-            <column name="ficsal_accum_number" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="ficsal_sign" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-
             <column name="created_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
                 <constraints nullable="false"/>
             </column>
@@ -278,7 +286,7 @@
 
 
     <changeSet id="1.0.7" author="sharphurt">
-        <!--Receipt table-->
+        <!--Applications table-->
         <createTable tableName="application">
             <column name="application_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>

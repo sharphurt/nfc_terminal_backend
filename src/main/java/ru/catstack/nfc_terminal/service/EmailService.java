@@ -77,9 +77,9 @@ public class EmailService {
         data.put("sender-email", "sharphurt@catstack.net");
         data.put("recipient-email", receipt.getBuyerEmail());
         data.put("kkt", String.valueOf(receipt.getCompany().getKkt()));
-        data.put("fn", String.valueOf(receipt.getFiscalSign()));
+        data.put("fn", String.valueOf(receipt.getCompany().getFiscalSign()));
         data.put("fd", String.valueOf(receipt.getId()));
-        data.put("fp", String.valueOf(receipt.getFiscalAccumulator()));
+        data.put("fp", String.valueOf(receipt.getCompany().getFiscalAccumulator()));
         return data;
     }
 
