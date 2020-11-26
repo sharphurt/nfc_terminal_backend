@@ -6,6 +6,7 @@ import ru.catstack.nfc_terminal.model.audit.DateAudit;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "employee")
 public class Employee extends DateAudit {
     @JsonIgnore
     @Id

@@ -4,17 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import ru.catstack.nfc_terminal.exception.ResourceNotFoundException;
 import ru.catstack.nfc_terminal.model.Receipt;
+import ru.catstack.nfc_terminal.util.Util;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Scanner;
 
 @Service
 public class EmailService {
@@ -29,14 +26,7 @@ public class EmailService {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
-        String htmlCode;
-        try {
-            var scanner = new Scanner(new File("src/main/resources/email_temaplate/template.html"));
-            htmlCode = scanner.useDelimiter("\\A").next();
-            scanner.close();
-        } catch (FileNotFoundException e) {
-            throw new ResourceNotFoundException("File", "path", "resources/template.html");
-        }
+        String htmlCode = Util.readFile("src/main/resources/email_template/template.html");
 
         var data = getDataFromReceipt(receipt);
         var html = insertDataToHTML(data, htmlCode);
