@@ -1,9 +1,12 @@
 package ru.catstack.nfc_terminal.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.catstack.nfc_terminal.exception.ForbiddenException;
 import ru.catstack.nfc_terminal.exception.ResourceNotFoundException;
+import ru.catstack.nfc_terminal.model.Company;
 import ru.catstack.nfc_terminal.model.Payment;
 import ru.catstack.nfc_terminal.model.Receipt;
 import ru.catstack.nfc_terminal.repository.ReceiptRepository;
@@ -36,5 +39,9 @@ public class ReceiptService {
                     return receiptRepository.save(r);
                 }
         ).orElseThrow(() -> new ForbiddenException("Device id is invalid"));
+    }
 
-    }}
+    public Page<Receipt> findAllByCompany(Company company, Pageable pageable) {
+        return receiptRepository.findAllByCompany(company, pageable);
+    }
+}
