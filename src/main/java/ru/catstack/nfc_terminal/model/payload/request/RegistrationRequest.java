@@ -37,9 +37,9 @@ public class RegistrationRequest {
     @ApiModelProperty(value = "A valid password string", required = true, allowableValues = "NonEmpty String")
     private String password;
 
-    @NotBlank(message = "Telephone cannot be blank")
-    @Pattern(regexp = "[+][0-9]{1,5}[0-9]{9,15}")
-    @ApiModelProperty(value = "A valid telephone string", required = true, allowableValues = "NonEmpty String")
+    @NotBlank(message = "Phone cannot be blank")
+    @Pattern(regexp = "\\+7[\\d]{10}", message = "Invalid phone value")
+    @ApiModelProperty(value = "A valid phone string", required = true, allowableValues = "NonEmpty String")
     private String phone;
 
     public RegistrationRequest(String username, String email, String firstName, String lastName, String patronymic, String password,  String phone) {

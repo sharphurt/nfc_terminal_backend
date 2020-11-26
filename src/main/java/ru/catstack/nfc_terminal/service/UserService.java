@@ -44,17 +44,21 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    Boolean existsByEmail(String email) {
+    boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    Boolean existsByUsername(String username) {
+    boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    boolean existsByPhone(String phone) {
+        return userRepository.existsByPhone(phone);
     }
 
     User createUser(RegistrationRequest request) {
         var user = new User(request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getUsername(),
-                request.getFirstName(), request.getLastName(), request.getPatronymic(), request.getPhone());
+                request.getFirstName(), request.getLastName(), request.getPatronymic(), request.getPhone().replace("+", ""));
         return save(user);
     }
 
