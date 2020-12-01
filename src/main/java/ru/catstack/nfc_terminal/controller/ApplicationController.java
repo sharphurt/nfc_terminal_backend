@@ -23,5 +23,12 @@ public class ApplicationController {
         applicationService.createApplication(applicationRequest);
         return new ApiResponse("Application saved successfully");
     }
+
+    @GetMapping("/get")
+    public ApiResponse getApplications(@RequestParam int from, @RequestParam int count) throws InterruptedException {
+        var applications = applicationService.getApplicationsGap(from, count);
+       // Thread.sleep(3000);
+        return new ApiResponse(applications);
+    }
 }
 

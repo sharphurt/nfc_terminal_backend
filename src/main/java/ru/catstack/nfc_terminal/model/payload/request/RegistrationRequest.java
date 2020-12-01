@@ -24,7 +24,7 @@ public class RegistrationRequest {
     private String lastName;
 
     @ApiModelProperty(value = "A valid patronymic")
-    @Pattern(regexp = "^(?!\\s*$).+", message = "Patronymic can be null but cant't be empty.txt")
+    @Pattern(regexp = "^(?!\\s*$).+", message = "Patronymic can be null but cant't be empty")
     private String patronymic;
 
     @NotBlank(message = "Email cannot be blank")

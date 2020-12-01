@@ -67,6 +67,7 @@ public class AuthService {
         return userService.existsByPhone(phone);
     }
 
+
     public JwtAuthResponse authenticateUser(LoginRequest loginRequest) {
         var uniqueKey = random.nextLong();
 
