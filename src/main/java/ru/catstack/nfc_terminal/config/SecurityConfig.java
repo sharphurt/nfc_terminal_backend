@@ -23,11 +23,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public static final List<String> publicEndpoints = List.of(
             "/api/auth/login",
             "/api/auth/register",
-            "/api/auth/checkEmail",
-            "/api/auth/checkUsername",
             "/api/email/send",
             "/api/auth/checkPhone",
-            "/api/applications/send"
+            "/api/applications/send",
+            "/api/applications/get",
+            "/api/check/email",
+            "/api/check/username",
+            "/api/check/inn"
+
     );
 
     public static final List<String> authenticatedEndpoints = List.of(

@@ -1,6 +1,7 @@
 package ru.catstack.nfc_terminal.model;
 
 import ru.catstack.nfc_terminal.model.audit.DateAudit;
+import ru.catstack.nfc_terminal.model.enums.ApplicationStatus;
 
 import javax.persistence.*;
 
@@ -24,6 +25,9 @@ public class Application extends DateAudit {
     @Column(name = "inn")
     private long inn;
 
+    @Column(name = "status")
+    private ApplicationStatus status;
+
     public Application() {
     }
 
@@ -32,6 +36,7 @@ public class Application extends DateAudit {
         this.phone = phone;
         this.email = email;
         this.inn = inn;
+        this.status = ApplicationStatus.NOT_CONSIDERED;
     }
 
     public long getId() {

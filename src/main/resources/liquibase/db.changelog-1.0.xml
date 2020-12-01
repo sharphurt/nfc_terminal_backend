@@ -308,6 +308,10 @@
                 <constraints nullable="false" unique="true"/>
             </column>
 
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false" unique="false"/>
+            </column>
+
             <column name="created_at" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
                 <constraints nullable="false"/>
             </column>
