@@ -3,7 +3,7 @@ package ru.catstack.nfc_terminal.security.jwt;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.catstack.nfc_terminal.model.UserStatus;
+import ru.catstack.nfc_terminal.model.enums.UserStatus;
 
 import java.util.Collection;
 import java.util.List;

@@ -3,9 +3,10 @@ package ru.catstack.nfc_terminal.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.catstack.nfc_terminal.exception.ObjectSavingException;
+import ru.catstack.nfc_terminal.model.payload.request.AdminRegistrationRequest;
+import ru.catstack.nfc_terminal.model.payload.request.ClientCompanyRegistrationRequest;
 import ru.catstack.nfc_terminal.model.payload.request.LogOutRequest;
 import ru.catstack.nfc_terminal.model.payload.request.LoginRequest;
-import ru.catstack.nfc_terminal.model.payload.request.RegistrationRequest;
 import ru.catstack.nfc_terminal.model.payload.response.ApiResponse;
 import ru.catstack.nfc_terminal.service.AuthService;
 
@@ -21,35 +22,24 @@ public class AuthenticationController {
         this.authService = authService;
     }
 
-    @GetMapping("/checkEmail")
-    public ApiResponse checkEmailInUse(@RequestParam("email") String email) {
-        var emailExists = authService.emailAlreadyExists(email);
-        return new ApiResponse(emailExists);
-    }
-
-    @GetMapping("/checkUsername")
-    public ApiResponse checkUsernameInUse(@RequestParam("username") String username) {
-        var usernameExists = authService.usernameAlreadyExists(username);
-        return new ApiResponse(usernameExists);
-    }
-
-    @GetMapping("/checkPhone")
-    public ApiResponse checkPhoneInUse(@RequestParam("phone") String phone) {
-        var phoneExists = authService.phoneAlreadyExists(phone);
-        return new ApiResponse(phoneExists);
-    }
-
     @PostMapping("/login")
     public ApiResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         var response = authService.authenticateUser(loginRequest);
         return new ApiResponse(response);
     }
 
+    @PostMapping("/admin/register")
+    public ApiResponse registerAdmin(@Valid @RequestBody AdminRegistrationRequest registrationRequest) {
+        return authService.registerAdmin(registrationRequest)
+                .map(user -> new ApiResponse("Admin registered successfully"))
+                .orElseThrow(() -> new ObjectSavingException(registrationRequest.getEmail(), "Registration not completed"));
+    }
+
     @PostMapping("/register")
-    public ApiResponse registerUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
-        return authService.registerUser(registrationRequest)
-                .map(user -> new ApiResponse("User registered successfully"))
-                .orElseThrow(() -> new ObjectSavingException(registrationRequest.getUsername(), "Missing user object in database"));
+    public ApiResponse registerClientAndCompany(@Valid @RequestBody ClientCompanyRegistrationRequest registrationRequest) {
+        return authService.registerClientCompany(registrationRequest)
+                .map(user -> new ApiResponse("Client and company registered successfully"))
+                .orElseThrow(() -> new ObjectSavingException(registrationRequest.getClient().getEmail(), "Registration not completed"));
     }
 
     @PostMapping("/logout")

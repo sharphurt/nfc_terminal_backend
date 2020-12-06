@@ -24,7 +24,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> dbUser = userRepository.findByUsername(username);
+        Optional<User> dbUser = userRepository.findByEmail(username);
         logger.info("Fetched user : " + dbUser + " by " + username);
         return dbUser.map(JwtUserFactory::fromUser)
                 .orElseThrow(() -> new UsernameNotFoundException("Couldn't find a matching user name in the database for " + username));

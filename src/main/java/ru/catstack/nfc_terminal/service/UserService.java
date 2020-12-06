@@ -9,7 +9,9 @@ import ru.catstack.nfc_terminal.exception.AccessDeniedException;
 import ru.catstack.nfc_terminal.exception.ResourceAlreadyInUseException;
 import ru.catstack.nfc_terminal.exception.ResourceNotFoundException;
 import ru.catstack.nfc_terminal.model.User;
-import ru.catstack.nfc_terminal.model.payload.request.RegistrationRequest;
+import ru.catstack.nfc_terminal.model.enums.UserPrivilege;
+import ru.catstack.nfc_terminal.model.payload.request.AdminRegistrationRequest;
+import ru.catstack.nfc_terminal.model.payload.request.ClientRequestBody;
 import ru.catstack.nfc_terminal.repository.UserRepository;
 import ru.catstack.nfc_terminal.security.jwt.JwtTokenProvider;
 import ru.catstack.nfc_terminal.security.jwt.JwtUser;
@@ -28,10 +30,6 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-    }
-
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
@@ -48,17 +46,29 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
-    boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
-    }
-
     boolean existsByPhone(String phone) {
         return userRepository.existsByPhone(phone);
     }
 
-    User createUser(RegistrationRequest request) {
-        var user = new User(request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getUsername(),
-                request.getFirstName(), request.getLastName(), request.getPatronymic(), request.getPhone().replace("+", ""));
+    User createAdmin(AdminRegistrationRequest request) {
+        var user = new User(request.getEmail(),
+                passwordEncoder.encode(request.getPassword()),
+                request.getFirstName(),
+                request.getLastName(),
+                request.getPatronymic(),
+                "+70000000000",
+                UserPrivilege.ADMIN);
+        return save(user);
+    }
+
+    User createClient(ClientRequestBody request) {
+        var user = new User(request.getEmail(),
+                passwordEncoder.encode(request.getPassword()),
+                request.getFirstName(),
+                request.getLastName(),
+                request.getPatronymic(),
+                request.getPhone(),
+                UserPrivilege.CLIENT);
         return save(user);
     }
 
@@ -67,13 +77,6 @@ public class UserService {
         if (!auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken)
             throw new AccessDeniedException("Unexpected error");
         return findByIdOrThrow(((JwtUser) auth.getPrincipal()).getId());
-    }
-
-    public void updateUsernameById(Long id, String username) {
-        if (existsByUsername(username))
-            throw new ResourceAlreadyInUseException("Username", "value", username);
-        userRepository.updateUsernameById(id, username);
-        setUpdatedAtById(id, Instant.now());
     }
 
     public void updateFirstNameById(Long id, String firstName) {
@@ -100,7 +103,7 @@ public class UserService {
 
     public void increaseLoginsCountById(long id) {
         userRepository.findById(id).ifPresent(u ->
-            userRepository.updateLoginsCountById(u.getId(), u.getLoginsCount() + 1)
+                userRepository.updateLoginsCountById(u.getId(), u.getLoginsCount() + 1)
         );
     }
 

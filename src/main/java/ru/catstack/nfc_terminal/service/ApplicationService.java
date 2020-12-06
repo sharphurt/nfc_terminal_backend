@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.catstack.nfc_terminal.exception.ResourceAlreadyInUseException;
 import ru.catstack.nfc_terminal.model.Application;
+import ru.catstack.nfc_terminal.model.enums.ApplicationStatus;
 import ru.catstack.nfc_terminal.model.payload.request.ApplicationRequest;
 import ru.catstack.nfc_terminal.repository.ApplicationRepository;
 import ru.catstack.nfc_terminal.util.OffsetBasedPage;
@@ -34,10 +35,24 @@ public class ApplicationService {
     }
 
     public List<Application> getApplicationsGap(int from, int count) {
-        return findAll(new OffsetBasedPage(from, count, sort)).getContent();
+        return findAllByStatus(new OffsetBasedPage(from, count, sort), ApplicationStatus.NOT_CONSIDERED).getContent();
     }
 
-    public Page<Application> findAll(Pageable pageable) {
-        return applicationRepository.findAll(pageable);
+    public Page<Application> findAllByStatus(Pageable pageable, ApplicationStatus status) {
+        return applicationRepository.findAllByStatus(pageable, status);
+    }
+
+    public void setStatusById(long id, ApplicationStatus status) {
+        if (existsById(id)) {
+            applicationRepository.updateStatusById(id, status);
+        }
+    }
+
+    public void deleteById(long id) {
+        applicationRepository.deleteById(id);
+    }
+
+    public boolean existsById(long id) {
+        return applicationRepository.existsById(id);
     }
 }

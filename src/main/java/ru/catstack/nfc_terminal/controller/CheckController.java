@@ -29,12 +29,6 @@ public class CheckController {
         return new ApiResponse(emailExists);
     }
 
-    @GetMapping("/username")
-    public ApiResponse checkUsernameInUse(@RequestParam("username") String username) {
-        var usernameExists = authService.usernameAlreadyExists(username);
-        return new ApiResponse(usernameExists);
-    }
-
     @GetMapping("/phone")
     public ApiResponse checkPhoneInUse(@RequestParam("phone") String phone) {
         var phoneExists = authService.phoneAlreadyExists(phone);

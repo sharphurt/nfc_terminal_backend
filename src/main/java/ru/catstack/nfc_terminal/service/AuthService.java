@@ -2,6 +2,7 @@ package ru.catstack.nfc_terminal.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,11 +10,14 @@ import org.springframework.stereotype.Service;
 import ru.catstack.nfc_terminal.exception.ResourceAlreadyInUseException;
 import ru.catstack.nfc_terminal.exception.UserLogOutException;
 import ru.catstack.nfc_terminal.exception.UserLoginException;
+import ru.catstack.nfc_terminal.model.Employee;
 import ru.catstack.nfc_terminal.model.Session;
 import ru.catstack.nfc_terminal.model.User;
+import ru.catstack.nfc_terminal.model.enums.ApplicationStatus;
+import ru.catstack.nfc_terminal.model.payload.request.AdminRegistrationRequest;
+import ru.catstack.nfc_terminal.model.payload.request.ClientCompanyRegistrationRequest;
 import ru.catstack.nfc_terminal.model.payload.request.LogOutRequest;
 import ru.catstack.nfc_terminal.model.payload.request.LoginRequest;
-import ru.catstack.nfc_terminal.model.payload.request.RegistrationRequest;
 import ru.catstack.nfc_terminal.model.payload.response.JwtAuthResponse;
 import ru.catstack.nfc_terminal.security.jwt.JwtTokenProvider;
 import ru.catstack.nfc_terminal.security.jwt.JwtUser;
@@ -27,40 +31,63 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final SessionService sessionService;
     private final JwtTokenProvider tokenProvider;
+    private final CompanyService companyService;
+    private final EmployeeService employeeService;
+    private final ApplicationService applicationService;
     private final Random random = new Random();
 
     @Autowired
     public AuthService(UserService userService,
                        AuthenticationManager authenticationManager,
                        SessionService sessionService,
-                       JwtTokenProvider tokenProvider) {
+                       JwtTokenProvider tokenProvider, CompanyService companyService, EmployeeService employeeService, ApplicationService applicationService) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.sessionService = sessionService;
         this.tokenProvider = tokenProvider;
+        this.companyService = companyService;
+        this.employeeService = employeeService;
+        this.applicationService = applicationService;
     }
 
-    public Optional<User> registerUser(RegistrationRequest request) {
+    public Optional<User> registerAdmin(AdminRegistrationRequest request) {
         var email = request.getEmail();
-        var username = request.getUsername();
-        var phone = request.getPhone();
         if (emailAlreadyExists(email))
             throw new ResourceAlreadyInUseException("Email", "address", email);
-        if (usernameAlreadyExists(username))
-            throw new ResourceAlreadyInUseException("Username", "value", username);
-        if (phoneAlreadyExists(phone))
-            throw new ResourceAlreadyInUseException("Phone", "value", phone);
 
-        var registeredNewUser = userService.createUser(request);
+        var registeredNewUser = userService.createAdmin(request);
         return Optional.ofNullable(registeredNewUser);
+    }
+
+    public Optional<Employee> registerClientCompany(ClientCompanyRegistrationRequest request) {
+        if (isRequestCorrect(request)) {
+            var registeredClient = userService.createClient(request.getClient());
+            var registeredCompany = companyService.createCompany(request.getCompany());
+            applicationService.setStatusById(request.getApplicationToRemoveId(), ApplicationStatus.ACCEPTED);
+            return employeeService.createEmployee(registeredClient, registeredCompany);
+        }
+        return Optional.empty();
+    }
+
+    private boolean isRequestCorrect(ClientCompanyRegistrationRequest request) {
+        var client = request.getClient();
+        var company = request.getCompany();
+
+        if (emailAlreadyExists(client.getEmail()))
+            throw new ResourceAlreadyInUseException("Email", "address", client.getEmail());
+        if (phoneAlreadyExists(client.getPhone()))
+            throw new ResourceAlreadyInUseException("Phone", "value", client.getPhone());
+        if (companyService.existsByInn(company.getInn()))
+            throw new ResourceAlreadyInUseException("INN", "value", company.getInn());
+        if (companyService.existsByKkt(company.getKkt()))
+            throw new ResourceAlreadyInUseException("KKT", "value", company.getKkt());
+        if (companyService.existsByName(company.getName()))
+            throw new ResourceAlreadyInUseException("Company name", "value", company.getName());
+        return true;
     }
 
     public boolean emailAlreadyExists(String email) {
         return userService.existsByEmail(email);
-    }
-
-    public boolean usernameAlreadyExists(String username) {
-        return userService.existsByUsername(username);
     }
 
     public boolean phoneAlreadyExists(String phone) {
@@ -71,7 +98,9 @@ public class AuthService {
     public JwtAuthResponse authenticateUser(LoginRequest loginRequest) {
         var uniqueKey = random.nextLong();
 
-        var username = userService.findByEmail(loginRequest.getEmail()).map(User::getUsername).orElseThrow(() -> new UserLoginException(""));
+        var username = userService.findByEmail(loginRequest.getEmail())
+                .map(User::getEmail)
+                .orElseThrow(() -> new UserLoginException("Неверный логин или пароль. Проверьте правильность написания введенных данных и повторите попытку"));
 
         var auth = createAuthenticationOrThrow(username, loginRequest.getPassword());
         var principal = (JwtUser) auth.getPrincipal();
@@ -84,9 +113,13 @@ public class AuthService {
     }
 
     private Authentication createAuthenticationOrThrow(String username, String password) {
-        return Optional.ofNullable(authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)))
-                .orElseThrow(() -> new UserLoginException("Couldn't login user [" + username + "]"));
+        try {
+            return Optional.ofNullable(authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)))
+                    .orElseThrow(() -> new UserLoginException("Couldn't login user [" + username + "]"));
+        } catch (BadCredentialsException e) {
+            throw new UserLoginException("Неверный логин или пароль. Проверьте правильность написания введенных данных и повторите попытку");
+        }
     }
 
     public String generateToken(JwtUser user, Session session) {
