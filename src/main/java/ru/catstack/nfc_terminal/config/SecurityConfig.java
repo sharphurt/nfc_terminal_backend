@@ -22,15 +22,14 @@ import java.util.List;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public static final List<String> publicEndpoints = List.of(
             "/api/auth/login",
-            "/api/auth/register",
             "/api/email/send",
             "/api/auth/checkPhone",
             "/api/applications/send",
             "/api/applications/get",
             "/api/check/email",
             "/api/check/username",
-            "/api/check/inn"
-
+            "/api/check/inn",
+            "/api/auth/admin/register"
     );
 
     public static final List<String> authenticatedEndpoints = List.of(
@@ -39,7 +38,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/companies/create",
             "/api/companies\\/\\d+",
             "/api/payment/create",
-            "/api/history/get"
+            "/api/history/get",
+            "/api/auth/register"
     );
 
     private final JwtTokenProvider tokenProvider;

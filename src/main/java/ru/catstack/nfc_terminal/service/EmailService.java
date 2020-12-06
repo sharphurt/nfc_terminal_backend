@@ -52,7 +52,7 @@ public class EmailService {
         data.put("shift-number", String.valueOf(receipt.getVendor().getLoginsCount()));
 
         var vendorFullname = receipt.getVendor().getLastName() + " " + receipt.getVendor().getFirstName();
-        if (receipt.getVendor().getPatronymic() != null)
+        if (!receipt.getVendor().getPatronymic().equals(""))
             vendorFullname += " " + receipt.getVendor().getPatronymic();
 
         var formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");

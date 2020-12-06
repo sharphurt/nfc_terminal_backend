@@ -9,12 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @ApiModel(value = "Registration Request", description = "The registration request payload")
-public class RegistrationRequest {
-    @NotBlank(message = "Username cannot be blank")
-    @Pattern(regexp = "[a-zA-Z0-9]{2,30}", message = "The username can only include uppercase and lowercase letters of the English alphabet and numbers and length must be between 2 and 30 character")
-    @ApiModelProperty(value = "A valid username", required = true, allowableValues = "NonEmpty String")
-    private String username;
-
+public class AdminRegistrationRequest {
     @NotBlank(message = "First name cannot be blank")
     @ApiModelProperty(value = "A valid first name", required = true, allowableValues = "NonEmpty String")
     private String firstName;
@@ -37,26 +32,15 @@ public class RegistrationRequest {
     @ApiModelProperty(value = "A valid password string", required = true, allowableValues = "NonEmpty String")
     private String password;
 
-    @NotBlank(message = "Phone cannot be blank")
-    @Pattern(regexp = "\\+7[\\d]{10}", message = "Invalid phone value")
-    @ApiModelProperty(value = "A valid phone string", required = true, allowableValues = "NonEmpty String")
-    private String phone;
-
-    public RegistrationRequest(String username, String email, String firstName, String lastName, String patronymic, String password,  String phone) {
-        this.username = username;
+    public AdminRegistrationRequest(String email, String firstName, String lastName, String patronymic, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;
         this.email = email;
         this.password = password;
-        this.phone = phone;
     }
 
-    public RegistrationRequest() {
-    }
-
-    public String getUsername() {
-        return username;
+    public AdminRegistrationRequest() {
     }
 
     public String getEmail() {
@@ -77,9 +61,5 @@ public class RegistrationRequest {
 
     public String getPatronymic() {
         return patronymic;
-    }
-
-    public String getPhone() {
-        return phone;
     }
 }

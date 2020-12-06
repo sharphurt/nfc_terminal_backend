@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.*;
 
 @ApiModel(value = "Add company request", description = "The adding company request payload")
-public class CreateCompanyRequest {
+public class CompanyRequestBody {
     @ApiModelProperty(value = "Company name", allowableValues = "NonEmpty String")
     @NotBlank(message = "Company name can't be blank")
     @NotNull(message = "Company name can't be null")
@@ -28,20 +28,14 @@ public class CreateCompanyRequest {
     @NotNull(message = "Company address can't be null")
     private String address;
 
-    @ApiModelProperty(value = "A valid KKT", required = true)
-    @Min(value = 1_000_000_000_000_000L, message = "KKT length must be exactly 16 digits")
-    @Max(value = 9_999_999_999_999_999L, message = "KKT length must be exactly 16 digits")
-    private long kkt;
-
-    public CreateCompanyRequest() {
+    public CompanyRequestBody() {
     }
 
-    public CreateCompanyRequest(String name, long inn, String taxSystem, String address, long kkt) {
+    public CompanyRequestBody(String name, long inn, String taxSystem, String address) {
         this.name = name;
         this.inn = inn;
         this.taxSystem = taxSystem;
         this.address = address;
-        this.kkt = kkt;
     }
 
     public String getName() {
@@ -58,9 +52,5 @@ public class CreateCompanyRequest {
 
     public String getAddress() {
         return address;
-    }
-
-    public long getKkt() {
-        return kkt;
     }
 }

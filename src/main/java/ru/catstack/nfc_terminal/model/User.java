@@ -3,6 +3,8 @@ package ru.catstack.nfc_terminal.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.catstack.nfc_terminal.model.audit.DateAudit;
+import ru.catstack.nfc_terminal.model.enums.UserPrivilege;
+import ru.catstack.nfc_terminal.model.enums.UserStatus;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -15,9 +17,6 @@ public class User extends DateAudit {
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "username")
-    private String username;
 
     @Column(name = "first_name")
     private String firstName;
@@ -48,16 +47,20 @@ public class User extends DateAudit {
     @Column(name = "logins_count")
     private long loginsCount;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_privilege")
+    private UserPrivilege userPrivilege;
+
     public User() {
     }
 
-    public User(String email, String password, String username, String firstName, String lastName, String patronymic, String phone) {
+    public User(String email, String password, String firstName, String lastName, String patronymic, String phone, UserPrivilege userPrivilege) {
         this.email = email;
         this.password = password;
-        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;
+        this.userPrivilege = userPrivilege;
         this.userStatus = UserStatus.ACTIVE;
         this.phone = phone;
         this.employees = new HashSet<>();
@@ -66,10 +69,6 @@ public class User extends DateAudit {
 
     public Long getId() {
         return id;
-    }
-
-    public String getUsername() {
-        return username;
     }
 
     public String getEmail() {
@@ -106,5 +105,9 @@ public class User extends DateAudit {
 
     public long getLoginsCount() {
         return loginsCount;
+    }
+
+    public UserPrivilege getUserPrivilege() {
+        return userPrivilege;
     }
 }

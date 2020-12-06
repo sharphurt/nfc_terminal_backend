@@ -14,14 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String name);
-
     Optional<User> findByEmail(String email);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE User c SET c.username = :username WHERE c.id = :id")
-    void updateUsernameById(@Param("id") Long id, @Param("username") String username);
 
     @Transactional
     @Modifying
@@ -56,5 +49,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);
-    boolean existsByUsername(String username);
 }

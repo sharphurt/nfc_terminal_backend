@@ -25,6 +25,7 @@ public class Application extends DateAudit {
     @Column(name = "inn")
     private long inn;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ApplicationStatus status;
 
