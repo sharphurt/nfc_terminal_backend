@@ -18,8 +18,7 @@ public class ClientRequestBody {
     @ApiModelProperty(value = "A valid last name", required = true, allowableValues = "NonEmpty String")
     private String lastName;
 
-    @ApiModelProperty(value = "A valid patronymic")
-    @Pattern(regexp = "^(?!\\s*$).+", message = "Patronymic can be null but cant't be empty")
+    @ApiModelProperty(value = "Patronymic")
     private String patronymic;
 
     @NotBlank(message = "Email cannot be blank")

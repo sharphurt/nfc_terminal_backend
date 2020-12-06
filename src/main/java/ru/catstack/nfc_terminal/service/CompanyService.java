@@ -24,7 +24,7 @@ public class CompanyService {
 
     public Company createCompany(CompanyRequestBody request) {
         var bill = billService.save(new Bill());
-        var company = new Company(request.getName(), request.getInn(), request.getTaxSystem(), request.getAddress(), request.getKkt(), Math.abs(random.nextLong()), Math.abs(random.nextLong()), bill);
+        var company = new Company(request.getName(), request.getInn(), request.getTaxSystem(), request.getAddress(), Math.abs(random.nextLong()), Math.abs(random.nextLong()), Math.abs(random.nextLong()), bill);
         save(company);
 
         return findByInn(company.getInn()).get();

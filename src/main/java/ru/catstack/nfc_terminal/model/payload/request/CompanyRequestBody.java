@@ -28,20 +28,14 @@ public class CompanyRequestBody {
     @NotNull(message = "Company address can't be null")
     private String address;
 
-    @ApiModelProperty(value = "A valid KKT", required = true)
-    @Min(value = 1_000_000_000_000_000L, message = "KKT length must be exactly 16 digits")
-    @Max(value = 9_999_999_999_999_999L, message = "KKT length must be exactly 16 digits")
-    private long kkt;
-
     public CompanyRequestBody() {
     }
 
-    public CompanyRequestBody(String name, long inn, String taxSystem, String address, long kkt) {
+    public CompanyRequestBody(String name, long inn, String taxSystem, String address) {
         this.name = name;
         this.inn = inn;
         this.taxSystem = taxSystem;
         this.address = address;
-        this.kkt = kkt;
     }
 
     public String getName() {
@@ -58,9 +52,5 @@ public class CompanyRequestBody {
 
     public String getAddress() {
         return address;
-    }
-
-    public long getKkt() {
-        return kkt;
     }
 }

@@ -83,8 +83,6 @@ public class AuthService {
             throw new ResourceAlreadyInUseException("Phone", "value", client.getPhone());
         if (companyService.existsByInn(company.getInn()))
             throw new ResourceAlreadyInUseException("INN", "value", company.getInn());
-        if (companyService.existsByKkt(company.getKkt()))
-            throw new ResourceAlreadyInUseException("KKT", "value", company.getKkt());
         if (companyService.existsByName(company.getName()))
             throw new ResourceAlreadyInUseException("Company name", "value", company.getName());
         return true;
