@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.catstack.nfc_terminal.exception.AccessDeniedException;
 import ru.catstack.nfc_terminal.exception.ResourceAlreadyInUseException;
 import ru.catstack.nfc_terminal.exception.UserLogOutException;
 import ru.catstack.nfc_terminal.exception.UserLoginException;
@@ -14,6 +15,7 @@ import ru.catstack.nfc_terminal.model.Employee;
 import ru.catstack.nfc_terminal.model.Session;
 import ru.catstack.nfc_terminal.model.User;
 import ru.catstack.nfc_terminal.model.enums.ApplicationStatus;
+import ru.catstack.nfc_terminal.model.enums.UserPrivilege;
 import ru.catstack.nfc_terminal.model.payload.request.AdminRegistrationRequest;
 import ru.catstack.nfc_terminal.model.payload.request.ClientCompanyRegistrationRequest;
 import ru.catstack.nfc_terminal.model.payload.request.LogOutRequest;
@@ -60,6 +62,8 @@ public class AuthService {
     }
 
     public Optional<Employee> registerClientCompany(ClientCompanyRegistrationRequest request) {
+        if (userService.getLoggedInUser().getUserPrivilege() != UserPrivilege.ADMIN)
+            throw new AccessDeniedException("You don't have permission to make this request");
         if (isRequestCorrect(request)) {
             var registeredClient = userService.createClient(request.getClient());
             var registeredCompany = companyService.createCompany(request.getCompany());

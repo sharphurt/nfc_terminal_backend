@@ -37,20 +37,13 @@ public class ClientRequestBody {
     @ApiModelProperty(value = "A valid phone string", required = true, allowableValues = "NonEmpty String")
     private String phone;
 
-
-    @NotBlank(message = "Privilege cannot be blank")
-    @Pattern(regexp = "CLIENT|ADMIN", message = "Invalid privilege")
-    @ApiModelProperty(value = "A valid privilege string", required = true, allowableValues = "NonEmpty String")
-    private String privilege;
-
-    public ClientRequestBody(String email, String firstName, String lastName, String patronymic, String password, String phone, @NotBlank(message = "Privilege cannot be blank") @Pattern(regexp = "CLIENT|ADMIN", message = "Invalid privilege") String privilege) {
+    public ClientRequestBody(String email, String firstName, String lastName, String patronymic, String password, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;
         this.email = email;
         this.password = password;
         this.phone = phone;
-        this.privilege = privilege;
     }
 
     public ClientRequestBody() {
@@ -78,9 +71,5 @@ public class ClientRequestBody {
 
     public String getPhone() {
         return phone;
-    }
-
-    public String getPrivilege() {
-        return privilege;
     }
 }
