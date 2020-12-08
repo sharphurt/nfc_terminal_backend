@@ -15,7 +15,9 @@ import ru.catstack.nfc_terminal.model.Employee;
 import ru.catstack.nfc_terminal.model.Session;
 import ru.catstack.nfc_terminal.model.User;
 import ru.catstack.nfc_terminal.model.enums.ApplicationStatus;
+import ru.catstack.nfc_terminal.model.enums.DeviceType;
 import ru.catstack.nfc_terminal.model.enums.UserPrivilege;
+import ru.catstack.nfc_terminal.model.enums.UserStatus;
 import ru.catstack.nfc_terminal.model.payload.request.AdminRegistrationRequest;
 import ru.catstack.nfc_terminal.model.payload.request.ClientCompanyRegistrationRequest;
 import ru.catstack.nfc_terminal.model.payload.request.LogOutRequest;
@@ -57,6 +59,9 @@ public class AuthService {
         if (emailAlreadyExists(email))
             throw new ResourceAlreadyInUseException("Email", "address", email);
 
+        if (phoneAlreadyExists(request.getPhone()))
+            throw new ResourceAlreadyInUseException("Phone", "value", request.getPhone());
+
         var registeredNewUser = userService.createAdmin(request);
         return Optional.ofNullable(registeredNewUser);
     }
@@ -64,6 +69,7 @@ public class AuthService {
     public Optional<Employee> registerClientCompany(ClientCompanyRegistrationRequest request) {
         if (userService.getLoggedInUser().getUserPrivilege() != UserPrivilege.ADMIN)
             throw new AccessDeniedException("You don't have permission to make this request");
+
         if (isRequestCorrect(request)) {
             var registeredClient = userService.createClient(request.getClient());
             var registeredCompany = companyService.createCompany(request.getCompany());
@@ -100,11 +106,21 @@ public class AuthService {
     public JwtAuthResponse authenticateUser(LoginRequest loginRequest) {
         var uniqueKey = random.nextLong();
 
-        var username = userService.findByEmail(loginRequest.getEmail())
-                .map(User::getEmail)
+        var user = userService.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new UserLoginException("Неверный логин или пароль. Проверьте правильность написания введенных данных и повторите попытку"));
+        if (user.getUserPrivilege() == UserPrivilege.ADMIN && loginRequest.getDeviceInfo().getDeviceType() != DeviceType.DEVICE_TYPE_WINDOWS)
+            throw new AccessDeniedException("Вы не можете авторизоваться с этого устройства");
 
-        var auth = createAuthenticationOrThrow(username, loginRequest.getPassword());
+        if (user.getUserPrivilege() != UserPrivilege.ADMIN && loginRequest.getDeviceInfo().getDeviceType() == DeviceType.DEVICE_TYPE_WINDOWS)
+        {
+            userService.updateStatusById(user.getId(), UserStatus.LOCKED);
+            throw new AccessDeniedException("Ваш аккаунт временно заблокирован. Для разблокировки обратитесь в техническую поддержку сервиса");
+        }
+
+        if (user.getUserStatus() == UserStatus.LOCKED)
+            throw new AccessDeniedException("Ваш аккаунт временно заблокирован. Для разблокировки обратитесь в техническую поддержку сервиса");
+
+        var auth = createAuthenticationOrThrow(user.getEmail(), loginRequest.getPassword());
         var principal = (JwtUser) auth.getPrincipal();
         SecurityContextHolder.getContext().setAuthentication(auth);
 

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.catstack.nfc_terminal.model.User;
+import ru.catstack.nfc_terminal.model.enums.UserStatus;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
@@ -45,6 +46,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("UPDATE User c SET c.loginsCount = :newLG WHERE c.id = :id")
     void updateLoginsCountById(@Param("id") Long id, @Param("newLG") long newLG);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE User c SET c.userStatus = :status WHERE c.id = :id")
+    void updateStatusById(@Param("id") Long id, @Param("status") UserStatus status);
+
 
 
     boolean existsByEmail(String email);
