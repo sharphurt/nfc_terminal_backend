@@ -41,6 +41,7 @@ public class User extends DateAudit {
     @Column(name = "status")
     private UserStatus userStatus;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Employee> employees;
 

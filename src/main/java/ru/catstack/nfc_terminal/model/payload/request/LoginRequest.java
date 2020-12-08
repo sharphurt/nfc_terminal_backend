@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import ru.catstack.nfc_terminal.model.DeviceInfo;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -14,7 +13,6 @@ import javax.validation.constraints.NotNull;
 public class LoginRequest {
     @NotBlank(message = "Login Username can be null but not blank")
     @ApiModelProperty(value = "Registered username", allowableValues = "NonEmpty String")
-    @Email(message = "Email is not valid")
     private String email;
 
     @NotNull(message = "Login password cannot be blank")

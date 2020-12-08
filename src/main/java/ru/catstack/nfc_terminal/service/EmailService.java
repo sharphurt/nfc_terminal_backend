@@ -8,7 +8,6 @@ import ru.catstack.nfc_terminal.model.Receipt;
 import ru.catstack.nfc_terminal.util.Util;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,10 +22,10 @@ public class EmailService {
     }
 
     public void sendMail(Receipt receipt) {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+        var mimeMessage = javaMailSender.createMimeMessage();
+        var helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
-        String htmlCode = Util.readFile("src/main/resources/email_template/template.html");
+        var htmlCode = Util.readFile("src/main/resources/email_template/template.html");
 
         var data = getDataFromReceipt(receipt);
         var html = insertDataToHTML(data, htmlCode);

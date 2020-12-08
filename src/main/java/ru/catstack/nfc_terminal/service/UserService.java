@@ -10,6 +10,7 @@ import ru.catstack.nfc_terminal.exception.ResourceAlreadyInUseException;
 import ru.catstack.nfc_terminal.exception.ResourceNotFoundException;
 import ru.catstack.nfc_terminal.model.User;
 import ru.catstack.nfc_terminal.model.enums.UserPrivilege;
+import ru.catstack.nfc_terminal.model.enums.UserStatus;
 import ru.catstack.nfc_terminal.model.payload.request.AdminRegistrationRequest;
 import ru.catstack.nfc_terminal.model.payload.request.ClientRequestBody;
 import ru.catstack.nfc_terminal.repository.UserRepository;
@@ -56,7 +57,7 @@ public class UserService {
                 request.getFirstName(),
                 request.getLastName(),
                 request.getPatronymic(),
-                "+70000000000",
+                request.getPhone(),
                 UserPrivilege.ADMIN);
         return save(user);
     }
@@ -98,6 +99,11 @@ public class UserService {
 
     public void updatePasswordById(Long id, String password) {
         userRepository.updatePasswordById(id, passwordEncoder.encode(password));
+        setUpdatedAtById(id, Instant.now());
+    }
+
+    public void updateStatusById(Long id, UserStatus status) {
+        userRepository.updateStatusById(id, status);
         setUpdatedAtById(id, Instant.now());
     }
 
