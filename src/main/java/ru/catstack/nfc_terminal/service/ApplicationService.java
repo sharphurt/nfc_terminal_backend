@@ -4,9 +4,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.catstack.nfc_terminal.exception.AccessDeniedException;
 import ru.catstack.nfc_terminal.exception.ResourceAlreadyInUseException;
 import ru.catstack.nfc_terminal.model.Application;
 import ru.catstack.nfc_terminal.model.enums.ApplicationStatus;
+import ru.catstack.nfc_terminal.model.enums.UserPrivilege;
 import ru.catstack.nfc_terminal.model.payload.request.ApplicationRequest;
 import ru.catstack.nfc_terminal.repository.ApplicationRepository;
 import ru.catstack.nfc_terminal.util.OffsetBasedPage;
@@ -16,10 +18,12 @@ import java.util.List;
 @Service
 public class ApplicationService {
     private final ApplicationRepository applicationRepository;
+    private final UserService userService;
     private final Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
 
-    public ApplicationService(ApplicationRepository applicationRepository) {
+    public ApplicationService(ApplicationRepository applicationRepository, UserService userService) {
         this.applicationRepository = applicationRepository;
+        this.userService = userService;
     }
 
     public void createApplication(ApplicationRequest request) {
@@ -33,6 +37,14 @@ public class ApplicationService {
         var app = new Application(request.getName(), request.getPhone(), request.getEmail(), request.getInn());
         applicationRepository.save(app);
     }
+
+    public void rejectApplication(long id) {
+        if (userService.getLoggedInUser().getUserPrivilege() != UserPrivilege.ADMIN)
+            throw new AccessDeniedException("You don't have permission to make this request");
+
+        setStatusById(id, ApplicationStatus.REJECTED);
+    }
+
 
     public List<Application> getApplicationsGap(int from, int count) {
         return findAllByStatus(new OffsetBasedPage(from, count, sort), ApplicationStatus.NOT_CONSIDERED).getContent();

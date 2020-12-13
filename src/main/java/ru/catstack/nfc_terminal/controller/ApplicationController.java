@@ -24,6 +24,12 @@ public class ApplicationController {
         return new ApiResponse("Application saved successfully");
     }
 
+    @PostMapping("/reject")
+    public ApiResponse rejectApplication(@Valid @RequestParam long id) {
+        applicationService.rejectApplication(id);
+        return new ApiResponse("Application rejected successfully");
+    }
+
     @GetMapping("/get")
     public ApiResponse getApplications(@RequestParam int from, @RequestParam int count) throws InterruptedException {
         var applications = applicationService.getApplicationsGap(from, count);
