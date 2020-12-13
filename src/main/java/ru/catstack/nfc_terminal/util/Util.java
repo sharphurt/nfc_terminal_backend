@@ -20,7 +20,7 @@ public class Util {
         }
     }
 
-    public static String readFile(String filePath){
+    public static String readFile(String filePath) {
         String text;
         try {
             var scanner = new Scanner(new File(filePath));
