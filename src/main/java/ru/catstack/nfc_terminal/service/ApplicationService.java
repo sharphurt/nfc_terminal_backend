@@ -46,8 +46,12 @@ public class ApplicationService {
     }
 
 
-    public List<Application> getApplicationsGap(int from, int count) {
+    public List<Application> getNotConsideredApplicationsGap(int from, int count) {
         return findAllByStatus(new OffsetBasedPage(from, count, sort), ApplicationStatus.NOT_CONSIDERED).getContent();
+    }
+
+    public List<Application> getRejectedApplicationsGap(int from, int count) {
+        return findAllByStatus(new OffsetBasedPage(from, count, sort), ApplicationStatus.REJECTED).getContent();
     }
 
     public Page<Application> findAllByStatus(Pageable pageable, ApplicationStatus status) {

@@ -59,5 +59,9 @@ public class Application extends DateAudit {
     public long getInn() {
         return inn;
     }
+
+    public ApplicationStatus getStatus() {
+        return status;
+    }
 }
 
