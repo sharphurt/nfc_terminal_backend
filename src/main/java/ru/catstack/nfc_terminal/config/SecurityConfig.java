@@ -39,8 +39,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/payment/create",
             "/api/history/get",
             "/api/auth/register",
-            "/api/applications/get",
-            "/api/applications/reject"
+            "/api/applications/reject",
+            "/api/applications/new/get",
+            "/api/applications/rejected/get"
     );
 
     private final JwtTokenProvider tokenProvider;
