@@ -1,6 +1,9 @@
 package ru.catstack.nfc_terminal.repository;
 
 
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -52,7 +55,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("UPDATE User c SET c.userStatus = :status WHERE c.id = :id")
     void updateStatusById(@Param("id") Long id, @Param("status") UserStatus status);
 
-
+    Page<User> findAll(@NotNull Pageable pageable);
 
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);
