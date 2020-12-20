@@ -46,16 +46,15 @@ public class ApplicationService {
     }
 
 
-    public List<Application> getNotConsideredApplicationsGap(int from, int count) {
-        return findAllByStatus(new OffsetBasedPage(from, count, sort), ApplicationStatus.NOT_CONSIDERED).getContent();
+    public List<Application> getApplicationsGap(int from, int count) {
+        return findAll(new OffsetBasedPage(from, count, sort)).getContent();
     }
 
-    public List<Application> getRejectedApplicationsGap(int from, int count) {
-        return findAllByStatus(new OffsetBasedPage(from, count, sort), ApplicationStatus.REJECTED).getContent();
-    }
+    public Page<Application> findAll(Pageable pageable) {
+        if (userService.getLoggedInUser().getUserPrivilege() != UserPrivilege.ADMIN)
+            throw new AccessDeniedException("You don't have permission to make this request");
 
-    public Page<Application> findAllByStatus(Pageable pageable, ApplicationStatus status) {
-        return applicationRepository.findAllByStatus(pageable, status);
+        return applicationRepository.findAll(pageable);
     }
 
     public void setStatusById(long id, ApplicationStatus status) {

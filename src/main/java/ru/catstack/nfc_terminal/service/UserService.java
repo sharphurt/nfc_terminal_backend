@@ -1,6 +1,9 @@
 package ru.catstack.nfc_terminal.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,14 +19,17 @@ import ru.catstack.nfc_terminal.model.payload.request.ClientRequestBody;
 import ru.catstack.nfc_terminal.repository.UserRepository;
 import ru.catstack.nfc_terminal.security.jwt.JwtTokenProvider;
 import ru.catstack.nfc_terminal.security.jwt.JwtUser;
+import ru.catstack.nfc_terminal.util.OffsetBasedPage;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
 
     @Autowired
     public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
@@ -112,6 +118,19 @@ public class UserService {
                 userRepository.updateLoginsCountById(u.getId(), u.getLoginsCount() + 1)
         );
     }
+
+    public List<User> getUsersGap(int from, int count) {
+        if (getLoggedInUser().getUserPrivilege() != UserPrivilege.ADMIN)
+            throw new AccessDeniedException("You don't have permission to make this request");
+
+        return findAllByStatus(new OffsetBasedPage(from, count, sort)).getContent();
+    }
+
+    public Page<User> findAllByStatus(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+
 
     private void setUpdatedAtById(Long id, Instant updatedAt) {
         userRepository.setUpdatedAtById(id, updatedAt);

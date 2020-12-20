@@ -30,15 +30,9 @@ public class ApplicationController {
         return new ApiResponse("Application rejected successfully");
     }
 
-    @GetMapping("/new/get")
+    @GetMapping("/get")
     public ApiResponse getNotConsideredApplications(@RequestParam int from, @RequestParam int count) throws InterruptedException {
-        var applications = applicationService.getNotConsideredApplicationsGap(from, count);
-        return new ApiResponse(applications);
-    }
-
-    @GetMapping("/rejected/get")
-    public ApiResponse getRejectedApplications(@RequestParam int from, @RequestParam int count) throws InterruptedException {
-        var applications = applicationService.getRejectedApplicationsGap(from, count);
+        var applications = applicationService.getApplicationsGap(from, count);
         return new ApiResponse(applications);
     }
 }
