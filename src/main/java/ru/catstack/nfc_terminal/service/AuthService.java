@@ -77,6 +77,7 @@ public class AuthService {
                 emailService.sendRegistrationMail(request);
             } catch (Exception e)
             {
+                e.printStackTrace();
                 throw new BadRequestException("Email service exception");
             }
 
