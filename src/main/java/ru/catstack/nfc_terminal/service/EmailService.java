@@ -5,6 +5,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import ru.catstack.nfc_terminal.model.Receipt;
+import ru.catstack.nfc_terminal.model.payload.request.ClientCompanyRegistrationRequest;
 import ru.catstack.nfc_terminal.util.Util;
 
 import javax.mail.MessagingException;
@@ -21,24 +22,40 @@ public class EmailService {
         this.javaMailSender = javaMailSender;
     }
 
-    public void sendMail(Receipt receipt) {
-        var mimeMessage = javaMailSender.createMimeMessage();
-        var helper = new MimeMessageHelper(mimeMessage, "utf-8");
-
+    public void sendReceiptMail(Receipt receipt) {
         var htmlCode = Util.readFile("src/main/resources/email_template/template.html");
-
         var data = getDataFromReceipt(receipt);
         var html = insertDataToHTML(data, htmlCode);
+        sendMail(data.get("recipient-email"), "Кассовый чек о покупке", "no-reply@catstack.net", html);
+    }
 
+    public void sendRegistrationMail(ClientCompanyRegistrationRequest request) {
+        var htmlCode = Util.readFile("src/main/resources/email_template/clientRegistrationTemplate.html");
+        var data = getDataFromRegistrationRequest(request);
+        var html = insertDataToHTML(data, htmlCode);
+        sendMail(data.get("recipient-email"), "Ваша заявка была одобрена!", "no-reply@catstack.net", html);
+    }
+
+    public void sendMail(String to, String subject, String from, String html) {
+        var mimeMessage = javaMailSender.createMimeMessage();
+        var helper = new MimeMessageHelper(mimeMessage, "utf-8");
         try {
             helper.setText(html, true); // Use this or above line.
-            helper.setTo(data.get("recipient-email"));
-            helper.setSubject("Кассовый чек о покупке");
-            helper.setFrom(data.get("sender-email"));
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setFrom(from);
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    private HashMap<String, String> getDataFromRegistrationRequest(ClientCompanyRegistrationRequest request) {
+        var data = new HashMap<String, String>();
+        data.put("recipient-email", request.getClient().getEmail());
+        data.put("login", request.getClient().getEmail());
+        data.put("password", request.getClient().getPassword());
+        return data;
     }
 
     private HashMap<String, String> getDataFromReceipt(Receipt receipt) {
@@ -63,7 +80,6 @@ public class EmailService {
         data.put("product-amount", String.valueOf(receipt.getProductAmount()));
         data.put("product-total", String.format("%.2f", receipt.getTotal()));
         data.put("total", String.format("%.2f", receipt.getTotal()));
-        data.put("sender-email", "sharphurt@catstack.net");
         data.put("recipient-email", receipt.getBuyerEmail());
         data.put("kkt", String.valueOf(receipt.getCompany().getKkt()));
         data.put("fn", String.valueOf(receipt.getCompany().getFiscalSign()));

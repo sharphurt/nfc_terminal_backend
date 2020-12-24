@@ -2,6 +2,7 @@ package ru.catstack.nfc_terminal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.catstack.nfc_terminal.model.enums.ApplicationStatus;
 import ru.catstack.nfc_terminal.model.payload.request.ApplicationRequest;
 import ru.catstack.nfc_terminal.model.payload.response.ApiResponse;
 import ru.catstack.nfc_terminal.service.ApplicationService;
@@ -34,6 +35,12 @@ public class ApplicationController {
     public ApiResponse getNotConsideredApplications(@RequestParam int from, @RequestParam int count) throws InterruptedException {
         var applications = applicationService.getApplicationsGap(from, count);
         return new ApiResponse(applications);
+    }
+
+    @GetMapping("/setStatus")
+    public ApiResponse setApplicationStatus(@RequestParam long id, @RequestParam ApplicationStatus status) throws InterruptedException {
+        applicationService.setStatusById(id, status);
+        return new ApiResponse("Status set successfully");
     }
 }
 
