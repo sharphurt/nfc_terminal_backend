@@ -32,6 +32,7 @@ import java.util.Random;
 @Service
 public class AuthService {
     private final UserService userService;
+    private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
     private final SessionService sessionService;
     private final JwtTokenProvider tokenProvider;
@@ -42,10 +43,11 @@ public class AuthService {
 
     @Autowired
     public AuthService(UserService userService,
-                       AuthenticationManager authenticationManager,
+                       EmailService emailService, AuthenticationManager authenticationManager,
                        SessionService sessionService,
                        JwtTokenProvider tokenProvider, CompanyService companyService, EmployeeService employeeService, ApplicationService applicationService) {
         this.userService = userService;
+        this.emailService = emailService;
         this.authenticationManager = authenticationManager;
         this.sessionService = sessionService;
         this.tokenProvider = tokenProvider;
@@ -74,6 +76,7 @@ public class AuthService {
             var registeredClient = userService.createClient(request.getClient());
             var registeredCompany = companyService.createCompany(request.getCompany());
             applicationService.setStatusById(request.getApplicationToRemoveId(), ApplicationStatus.ACCEPTED);
+            emailService.sendRegistrationMail(request);
             return employeeService.createEmployee(registeredClient, registeredCompany);
         }
         return Optional.empty();
@@ -127,6 +130,8 @@ public class AuthService {
         var session = sessionService.createSession(auth, loginRequest, uniqueKey);
         userService.increaseLoginsCountById(principal.getId());
         var jwtToken = generateToken(principal, session);
+
+
         return new JwtAuthResponse(jwtToken, tokenProvider.getTokenPrefix());
     }
 

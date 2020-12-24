@@ -22,7 +22,7 @@ public class PaymentController {
     }
 
     @PostMapping("/create")
-    public ApiResponse authenticateUser(@Valid @RequestBody CreatePaymentRequest request) {
+    public ApiResponse createPayment(@Valid @RequestBody CreatePaymentRequest request) {
         var response = paymentService.acceptPayment(request);
         return new ApiResponse(response);
     }
