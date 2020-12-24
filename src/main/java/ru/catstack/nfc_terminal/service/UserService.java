@@ -130,7 +130,11 @@ public class UserService {
         return userRepository.findAll(pageable);
     }
 
-
+    public void setStatusById(long id, UserStatus status) {
+        if (getLoggedInUser().getUserPrivilege() != UserPrivilege.ADMIN)
+            throw new AccessDeniedException("You don't have permission to make this request");
+        userRepository.updateStatusById(id, status);
+    }
 
     private void setUpdatedAtById(Long id, Instant updatedAt) {
         userRepository.setUpdatedAtById(id, updatedAt);
