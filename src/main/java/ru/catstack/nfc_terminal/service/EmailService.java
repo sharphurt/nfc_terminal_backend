@@ -26,7 +26,7 @@ public class EmailService {
     }
 
     public void sendReceiptMail(Receipt receipt) throws IOException {
-        ClassPathResource cpr = new ClassPathResource("email_template/clientRegistrationTemplate.html");
+        ClassPathResource cpr = new ClassPathResource("email_template/template.html");
         byte[] bdata = FileCopyUtils.copyToByteArray(cpr.getInputStream());
         var htmlCode = new String(bdata, StandardCharsets.UTF_8);
         var data = getDataFromReceipt(receipt);
@@ -35,7 +35,7 @@ public class EmailService {
     }
 
     public void sendRegistrationMail(ClientCompanyRegistrationRequest request) throws IOException {
-        ClassPathResource cpr = new ClassPathResource("email_template/template.html");
+        ClassPathResource cpr = new ClassPathResource("email_template/clientRegistrationTemplate.html");
         byte[] bdata = FileCopyUtils.copyToByteArray(cpr.getInputStream());
         var htmlCode = new String(bdata, StandardCharsets.UTF_8);
         var data = getDataFromRegistrationRequest(request);
