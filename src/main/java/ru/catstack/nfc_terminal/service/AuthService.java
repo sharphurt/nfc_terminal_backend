@@ -7,10 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import ru.catstack.nfc_terminal.exception.AccessDeniedException;
-import ru.catstack.nfc_terminal.exception.ResourceAlreadyInUseException;
-import ru.catstack.nfc_terminal.exception.UserLogOutException;
-import ru.catstack.nfc_terminal.exception.UserLoginException;
+import ru.catstack.nfc_terminal.exception.*;
 import ru.catstack.nfc_terminal.model.Employee;
 import ru.catstack.nfc_terminal.model.Session;
 import ru.catstack.nfc_terminal.model.User;
@@ -76,7 +73,14 @@ public class AuthService {
             var registeredClient = userService.createClient(request.getClient());
             var registeredCompany = companyService.createCompany(request.getCompany());
             applicationService.setStatusById(request.getApplicationToRemoveId(), ApplicationStatus.ACCEPTED);
-            emailService.sendRegistrationMail(request);
+            try {
+                emailService.sendRegistrationMail(request);
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+                throw new BadRequestException("Email service exception");
+            }
+
             return employeeService.createEmployee(registeredClient, registeredCompany);
         }
         return Optional.empty();
