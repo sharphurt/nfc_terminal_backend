@@ -1,6 +1,7 @@
 package ru.catstack.nfc_terminal.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,10 @@ import ru.catstack.nfc_terminal.model.payload.request.ClientCompanyRegistrationR
 import ru.catstack.nfc_terminal.util.Util;
 
 import javax.mail.MessagingException;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,15 +27,32 @@ public class EmailService {
         this.javaMailSender = javaMailSender;
     }
 
+    private File getFileFromURL() {
+        URL url = this.getClass().getClassLoader().getResource("/email_template");
+        File file = null;
+        try {
+            file = new File(url.toURI());
+        } catch (URISyntaxException e) {
+            file = new File(url.getPath());
+        } finally {
+            return file;
+        }
+    }
+
     public void sendReceiptMail(Receipt receipt) {
-        var htmlCode = Util.readFile("src/main/resources/email_template/template.html");
+        var templates = getFileFromURL().listFiles();
+        var htmlCode = Util.readFile(templates[1]);
         var data = getDataFromReceipt(receipt);
         var html = insertDataToHTML(data, htmlCode);
         sendMail(data.get("recipient-email"), "Кассовый чек о покупке", "no-reply@catstack.net", html);
     }
 
-    public void sendRegistrationMail(ClientCompanyRegistrationRequest request) {
-        var htmlCode = Util.readFile("src/main/resources/email_template/clientRegistrationTemplate.html");
+    public void sendRegistrationMail(ClientCompanyRegistrationRequest request) throws IOException {
+        File folder = new ClassPathResource("email_template").getFile();
+        var templates = folder.listFiles();
+        System.out.println(templates[0].getAbsolutePath());
+        System.out.println(templates[1].getAbsolutePath());
+        var htmlCode = Util.readFile(templates[0]);
         var data = getDataFromRegistrationRequest(request);
         var html = insertDataToHTML(data, htmlCode);
         sendMail(data.get("recipient-email"), "Ваша заявка была одобрена!", "no-reply@catstack.net", html);
