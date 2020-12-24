@@ -20,15 +20,16 @@ public class Util {
         }
     }
 
-    public static String readFile(String filePath) {
+    public static String readFile(File file) {
         String text;
         try {
-            var scanner = new Scanner(new File(filePath));
+            var scanner = new Scanner(file);
             text = scanner.useDelimiter("\\A").next();
             scanner.close();
         } catch (FileNotFoundException e) {
-            throw new ResourceNotFoundException("File", "path", filePath);
+            throw new ResourceNotFoundException("File", "path", file);
         }
         return text;
     }
+
 }
