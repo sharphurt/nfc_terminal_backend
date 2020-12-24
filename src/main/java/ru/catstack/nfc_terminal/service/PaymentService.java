@@ -10,6 +10,8 @@ import ru.catstack.nfc_terminal.model.enums.PaymentStatus;
 import ru.catstack.nfc_terminal.model.payload.request.CreatePaymentRequest;
 import ru.catstack.nfc_terminal.repository.PaymentRepository;
 
+import java.io.IOException;
+
 @Service
 public class PaymentService {
     private final PaymentRepository paymentRepository;
@@ -29,7 +31,7 @@ public class PaymentService {
         this.userService = userService;
     }
 
-    public PaymentStatus acceptPayment(@NotNull CreatePaymentRequest rq) {
+    public PaymentStatus acceptPayment(@NotNull CreatePaymentRequest rq) throws IOException {
         if (!companyService.existsByInn(rq.getInn()))
             throw new ResourceNotFoundException("Company", "INN", rq.getInn());
 
