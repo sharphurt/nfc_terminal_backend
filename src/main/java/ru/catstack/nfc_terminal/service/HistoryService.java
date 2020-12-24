@@ -7,9 +7,7 @@ import ru.catstack.nfc_terminal.model.Employee;
 import ru.catstack.nfc_terminal.model.HistoryRecord;
 import ru.catstack.nfc_terminal.model.Receipt;
 import ru.catstack.nfc_terminal.util.OffsetBasedPage;
-import ru.catstack.nfc_terminal.util.Util;
 
-import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,13 +35,15 @@ public class HistoryService {
                 + receipt.getProductName().toLowerCase().split(" ")[0]
                 + ".png";
 
-        String iconCode = Util.readFile("src/main/resources/card_inc_logos/empty.txt");
-        if (new File(iconPath).exists()) {
-            var code = Util.imageToBase64(iconPath);
-            if (code != null)
-                iconCode = code;
-        }
+//        String iconCode = Util.readFile("src/main/resources/card_inc_logos/empty.txt");
+//        if (new File(iconPath).exists()) {
+//            var code = Util.imageToBase64(iconPath);
+//            if (code != null)
+//                iconCode = code;
+//        }
 
+        var iconCode = "123";
+        //TODO: change!
         return new HistoryRecord(receipt.getProductName(), receipt.getProductCost(), iconCode, receipt.getCreatedAt());
     }
 }

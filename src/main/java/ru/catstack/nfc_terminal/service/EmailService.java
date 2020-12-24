@@ -1,6 +1,7 @@
 package ru.catstack.nfc_terminal.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import ru.catstack.nfc_terminal.util.Util;
 
 import javax.mail.MessagingException;
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -45,8 +47,9 @@ public class EmailService {
         sendMail(data.get("recipient-email"), "Кассовый чек о покупке", "no-reply@catstack.net", html);
     }
 
-    public void sendRegistrationMail(ClientCompanyRegistrationRequest request) {
-        var templates = getFileFromURL().listFiles();
+    public void sendRegistrationMail(ClientCompanyRegistrationRequest request) throws IOException {
+        File folder = new ClassPathResource("email_template").getFile();
+        var templates = folder.listFiles();
         System.out.println(templates[0].getAbsolutePath());
         System.out.println(templates[1].getAbsolutePath());
         var htmlCode = Util.readFile(templates[0]);
