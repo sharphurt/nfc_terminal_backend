@@ -5,15 +5,13 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import ru.catstack.nfc_terminal.model.Receipt;
 import ru.catstack.nfc_terminal.model.payload.request.ClientCompanyRegistrationRequest;
-import ru.catstack.nfc_terminal.util.Util;
 
 import javax.mail.MessagingException;
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,32 +25,19 @@ public class EmailService {
         this.javaMailSender = javaMailSender;
     }
 
-    private File getFileFromURL() {
-        URL url = this.getClass().getClassLoader().getResource("/email_template");
-        File file = null;
-        try {
-            file = new File(url.toURI());
-        } catch (URISyntaxException e) {
-            file = new File(url.getPath());
-        } finally {
-            return file;
-        }
-    }
-
-    public void sendReceiptMail(Receipt receipt) {
-        var templates = getFileFromURL().listFiles();
-        var htmlCode = Util.readFile(templates[1]);
+    public void sendReceiptMail(Receipt receipt) throws IOException {
+        ClassPathResource cpr = new ClassPathResource("email_template/clientRegistrationTemplate.html");
+        byte[] bdata = FileCopyUtils.copyToByteArray(cpr.getInputStream());
+        var htmlCode = new String(bdata, StandardCharsets.UTF_8);
         var data = getDataFromReceipt(receipt);
         var html = insertDataToHTML(data, htmlCode);
         sendMail(data.get("recipient-email"), "Кассовый чек о покупке", "no-reply@catstack.net", html);
     }
 
     public void sendRegistrationMail(ClientCompanyRegistrationRequest request) throws IOException {
-        File folder = new ClassPathResource("email_template").getFile();
-        var templates = folder.listFiles();
-        System.out.println(templates[0].getAbsolutePath());
-        System.out.println(templates[1].getAbsolutePath());
-        var htmlCode = Util.readFile(templates[0]);
+        ClassPathResource cpr = new ClassPathResource("email_template/template.html");
+        byte[] bdata = FileCopyUtils.copyToByteArray(cpr.getInputStream());
+        var htmlCode = new String(bdata, StandardCharsets.UTF_8);
         var data = getDataFromRegistrationRequest(request);
         var html = insertDataToHTML(data, htmlCode);
         sendMail(data.get("recipient-email"), "Ваша заявка была одобрена!", "no-reply@catstack.net", html);
@@ -113,7 +98,7 @@ public class EmailService {
     private String insertDataToHTML(HashMap<String, String> data, String html) {
         var result = html;
         for (String key : data.keySet()) {
-            result = result.replaceAll("%" + key + "%", data.get(key));
+            result = result.replace("%" + key + "%", data.get(key));
         }
         return result;
     }

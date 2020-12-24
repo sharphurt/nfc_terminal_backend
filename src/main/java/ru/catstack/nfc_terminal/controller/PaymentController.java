@@ -10,6 +10,7 @@ import ru.catstack.nfc_terminal.model.payload.response.ApiResponse;
 import ru.catstack.nfc_terminal.service.PaymentService;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/payment/")
@@ -22,7 +23,7 @@ public class PaymentController {
     }
 
     @PostMapping("/create")
-    public ApiResponse createPayment(@Valid @RequestBody CreatePaymentRequest request) {
+    public ApiResponse createPayment(@Valid @RequestBody CreatePaymentRequest request) throws IOException {
         var response = paymentService.acceptPayment(request);
         return new ApiResponse(response);
     }
