@@ -55,7 +55,12 @@ public class PaymentService {
             paymentRepository.updateStatusByIdempotenceKey(rq.getIdempotenceKey(), PaymentStatus.SUCCESSFULLY);
             var receipt = receiptService.createReceipt(payment);
             if (payment.getBuyerEmail() != null)
-                emailService.sendReceiptMail(receipt);
+                try {
+                    emailService.sendReceiptMail(receipt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new BadRequestException("Email service exception");
+                }
             return PaymentStatus.SUCCESSFULLY;
         }
 

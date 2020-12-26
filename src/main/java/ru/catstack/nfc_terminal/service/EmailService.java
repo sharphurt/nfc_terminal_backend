@@ -87,6 +87,7 @@ public class EmailService {
         data.put("product-amount", String.valueOf(receipt.getProductAmount()));
         data.put("product-total", String.format("%.2f", receipt.getTotal()));
         data.put("total", String.format("%.2f", receipt.getTotal()));
+        data.put("sender-email", receipt.getVendor().getEmail());
         data.put("recipient-email", receipt.getBuyerEmail());
         data.put("kkt", String.valueOf(receipt.getCompany().getKkt()));
         data.put("fn", String.valueOf(receipt.getCompany().getFiscalSign()));
