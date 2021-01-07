@@ -39,10 +39,10 @@ public class SessionService {
 
     public Session createSession(Authentication auth, LoginRequest loginRequest, long uniqueKey) {
         var user = (JwtUser) auth.getPrincipal();
-        if (isDeviceAlreadyExists(loginRequest.getDeviceInfo())) {
-            var session = findByUserIdAndDeviceId(user.getId(), loginRequest.getDeviceInfo().getDeviceId());
-            session.ifPresent(sess -> deleteBySessionId(sess.getId()));
-        }
+//        if (isDeviceAlreadyExists(loginRequest.getDeviceInfo())) {
+//            var session = findByUserIdAndDeviceId(user.getId(), loginRequest.getDeviceInfo().getDeviceId());
+//            session.ifPresent(sess -> deleteBySessionId(sess.getId()));
+//        }
         var newSession = new Session(user.getId(), loginRequest.getDeviceInfo(), uniqueKey);
         return save(newSession);
     }
