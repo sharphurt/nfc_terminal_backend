@@ -90,6 +90,10 @@ public class PaymentService {
             throw new BadRequestException("Unable to return payment");
 
         paymentRepository.updateStatusByIdempotenceKey(payment.get().getIdempotenceKey(), PaymentStatus.RETURNED);
+        var company = companyService.findByInn(rq.getInn());
+        if (company.isEmpty())
+            throw new ResourceNotFoundException("Comapny", "INN", rq.getInn());
+        companyService.addToBalance(company.get(), -payment.get().getCost());
         return PaymentStatus.RETURNED;
     }
 
