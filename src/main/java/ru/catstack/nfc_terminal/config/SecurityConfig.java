@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/companies/create",
             "/api/companies\\/\\d+",
             "/api/payment/create",
+            "/api/payment/return",
             "/api/history/get",
             "/api/auth/register",
             "/api/applications/reject",

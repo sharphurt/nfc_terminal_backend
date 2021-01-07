@@ -1,8 +1,14 @@
 package ru.catstack.nfc_terminal.model;
 
+import ru.catstack.nfc_terminal.model.enums.PaymentStatus;
+
 import java.time.Instant;
 
 public class HistoryRecord {
+    private long paymentId;
+
+    private PaymentStatus status;
+
     private String title;
 
     private float cost;
@@ -14,7 +20,9 @@ public class HistoryRecord {
     public HistoryRecord() {
     }
 
-    public HistoryRecord(String title, float cost, String cardLogoCode, Instant datetime) {
+    public HistoryRecord(long paymentId, PaymentStatus status, String title, float cost, String cardLogoCode, Instant datetime) {
+        this.paymentId = paymentId;
+        this.status = status;
         this.title = title;
         this.cost = cost;
         this.cardLogoCode = cardLogoCode;
@@ -37,5 +45,11 @@ public class HistoryRecord {
         return datetime;
     }
 
+    public long getPaymentId() {
+        return paymentId;
+    }
 
+    public PaymentStatus getStatus() {
+        return status;
+    }
 }

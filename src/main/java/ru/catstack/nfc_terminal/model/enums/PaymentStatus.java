@@ -18,5 +18,11 @@ public enum PaymentStatus {
         public String toString() {
             return "The payment is awaiting confirmation by the payer's bank";
         }
+    },
+    RETURNED {
+        @Override
+        public String toString() {
+            return "The payment was successfully returned to payer";
+        }
     }
 }

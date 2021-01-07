@@ -35,7 +35,7 @@ public class ReceiptService {
                 s -> {
                     var totalCost = payment.getCost() * payment.getAmount();
                     var buyerEmail = payment.getBuyerEmail() == null ? "Не указано" : payment.getBuyerEmail();
-                    var r = new Receipt(s, company, me, payment.getTitle(), payment.getCost(), payment.getAmount(), totalCost, buyerEmail);
+                    var r = new Receipt(payment.getId(), s, company, me, payment.getTitle(), payment.getCost(), payment.getAmount(), totalCost, buyerEmail);
                     return receiptRepository.save(r);
                 }
         ).orElseThrow(() -> new ForbiddenException("Device id is invalid"));

@@ -1,5 +1,7 @@
 package ru.catstack.nfc_terminal.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +14,9 @@ import java.util.Optional;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     boolean existsByIdempotenceKey(long key);
+
+    Page<Payment> findAllByVendorId(long inn, Pageable pageable);
+
 
     Optional<Payment> findByIdempotenceKey(long key);
 
