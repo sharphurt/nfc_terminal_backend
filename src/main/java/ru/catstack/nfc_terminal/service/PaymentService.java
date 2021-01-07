@@ -2,12 +2,16 @@ package ru.catstack.nfc_terminal.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.catstack.nfc_terminal.exception.BadRequestException;
 import ru.catstack.nfc_terminal.exception.ResourceNotFoundException;
+import ru.catstack.nfc_terminal.model.Company;
 import ru.catstack.nfc_terminal.model.Payment;
 import ru.catstack.nfc_terminal.model.enums.PaymentStatus;
 import ru.catstack.nfc_terminal.model.payload.request.CreatePaymentRequest;
+import ru.catstack.nfc_terminal.model.payload.request.ReturnPaymentRequest;
 import ru.catstack.nfc_terminal.repository.PaymentRepository;
 
 import java.io.IOException;
@@ -43,9 +47,9 @@ public class PaymentService {
         if (sessionService.findByUserIdAndDeviceId(me.getId(), rq.getDeviceInfo().getDeviceId()).isEmpty())
             throw new BadRequestException("Payment impossible");
 
-        var payment = new Payment(rq.getIdempotenceKey(), rq.getTitle(), rq.getPayerCN(), rq.getInn(), rq.getCost(), rq.getAmount(), rq.getDeviceInfo().getDeviceId(), rq.getBuyerEmail());
-        paymentRepository.save(payment);
-
+        var newPayment = new Payment(rq.getIdempotenceKey(), rq.getTitle(), rq.getPayerCN(), rq.getInn(), rq.getCost(), rq.getAmount(), rq.getDeviceInfo().getDeviceId(), rq.getBuyerEmail());
+        paymentRepository.save(newPayment);
+        var payment = paymentRepository.findByIdempotenceKey(newPayment.getIdempotenceKey()).get();
         var confirmation = GetBankConfirmation(rq.getPayerCN(), rq.getCost());
         if (confirmation) {
             var company = companyService.findByInn(rq.getInn());
@@ -59,12 +63,42 @@ public class PaymentService {
                     emailService.sendReceiptMail(receipt);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    throw new BadRequestException("Email service exception");
+                    throw new BadRequestException("К сожалению, не удалось отправить чек. Попробуйте позже");
                 }
             return PaymentStatus.SUCCESSFULLY;
         }
 
         return PaymentStatus.DENIED;
+    }
+
+    public PaymentStatus returnPayment(ReturnPaymentRequest rq) {
+        var me = userService.getLoggedInUser();
+        if (sessionService.findByUserIdAndDeviceId(me.getId(), rq.getDeviceInfo().getDeviceId()).isEmpty())
+            throw new BadRequestException("Payment impossible");
+
+        var payment = paymentRepository.findById(rq.getPaymentId());
+
+        if (payment.isEmpty())
+            throw new ResourceNotFoundException("Payment", "ID", rq.getPaymentId());
+
+        if (payment.get().getStatus() == PaymentStatus.RETURNED)
+            throw new BadRequestException("Payment was already returned to payer");
+
+        if (payment.get().getVendorId() != rq.getInn()
+                || !payment.get().getDeviceId().equals(rq.getDeviceInfo().getDeviceId())
+                || payment.get().getPayerCardNumber() != rq.getPayerCN())
+            throw new BadRequestException("Unable to return payment");
+
+        paymentRepository.updateStatusByIdempotenceKey(payment.get().getIdempotenceKey(), PaymentStatus.RETURNED);
+        var company = companyService.findByInn(rq.getInn());
+        if (company.isEmpty())
+            throw new ResourceNotFoundException("Comapny", "INN", rq.getInn());
+        companyService.addToBalance(company.get(), -payment.get().getCost());
+        return PaymentStatus.RETURNED;
+    }
+
+    public Page<Payment> findAllByCompany(Company company, Pageable pageable) {
+        return paymentRepository.findAllByVendorId(company.getInn(), pageable);
     }
 
     private boolean GetBankConfirmation(long payerCN, float amount) {

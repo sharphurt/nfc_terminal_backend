@@ -14,6 +14,10 @@ public class Receipt extends DateAudit {
     private long id;
 
     @JsonIgnore
+    @Column(name = "payment_id")
+    private long paymentId;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "session_id")
     private Session session;
@@ -44,7 +48,8 @@ public class Receipt extends DateAudit {
     public Receipt() {
     }
 
-    public Receipt(Session session, Company company, User vendor, String productName, float productCost, long productAmount, float total, String buyerEmail) {
+    public Receipt(long paymentId, Session session, Company company, User vendor, String productName, float productCost, long productAmount, float total, String buyerEmail) {
+        this.paymentId = paymentId;
         this.session = session;
         this.company = company;
         this.vendor = vendor;
@@ -89,5 +94,9 @@ public class Receipt extends DateAudit {
 
     public User getVendor() {
         return vendor;
+    }
+
+    public long getPaymentId() {
+        return paymentId;
     }
 }

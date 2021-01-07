@@ -241,6 +241,10 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
+            <column name="payment_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
             <column name="session_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
