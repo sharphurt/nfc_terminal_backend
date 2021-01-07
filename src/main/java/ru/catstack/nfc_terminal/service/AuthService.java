@@ -75,8 +75,7 @@ public class AuthService {
             applicationService.setStatusById(request.getApplicationToRemoveId(), ApplicationStatus.ACCEPTED);
             try {
                 emailService.sendRegistrationMail(request);
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
                 throw new BadRequestException("Email service exception");
             }
@@ -118,8 +117,7 @@ public class AuthService {
         if (user.getUserPrivilege() == UserPrivilege.ADMIN && loginRequest.getDeviceInfo().getDeviceType() != DeviceType.DEVICE_TYPE_WINDOWS)
             throw new AccessDeniedException("Вы не можете авторизоваться с этого устройства");
 
-        if (user.getUserPrivilege() != UserPrivilege.ADMIN && loginRequest.getDeviceInfo().getDeviceType() == DeviceType.DEVICE_TYPE_WINDOWS)
-        {
+        if (user.getUserPrivilege() != UserPrivilege.ADMIN && loginRequest.getDeviceInfo().getDeviceType() == DeviceType.DEVICE_TYPE_WINDOWS) {
             userService.updateStatusById(user.getId(), UserStatus.LOCKED);
             throw new AccessDeniedException("Ваш аккаунт временно заблокирован. Для разблокировки обратитесь в техническую поддержку сервиса");
         }
@@ -130,6 +128,12 @@ public class AuthService {
         var auth = createAuthenticationOrThrow(user.getEmail(), loginRequest.getPassword());
         var principal = (JwtUser) auth.getPrincipal();
         SecurityContextHolder.getContext().setAuthentication(auth);
+
+        var me = userService.getLoggedInUser();
+
+        sessionService.findByUserIdAndDeviceId(me.getId(), loginRequest.getDeviceInfo().getDeviceId()).ifPresent(
+                s -> logoutUser(new LogOutRequest(loginRequest.getDeviceInfo()))
+        );
 
         var session = sessionService.createSession(auth, loginRequest, uniqueKey);
         userService.increaseLoginsCountById(principal.getId());
